@@ -48,6 +48,9 @@ export const config = {
   defaultGuest: "Tamu Undangan",
   coverPhoto: "/images/cover.png",
 
+  // Full-body portrait shown on the opening section (blends into the backdrop).
+  openingPhoto: "/images/opening.png",
+
   // ── Opening verse ─────────────────────────────────────────
   verse: {
     arabic:

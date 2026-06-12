@@ -1,8 +1,33 @@
-import type { EventDetail } from "./config";
+import { config, type EventDetail } from "./config";
 
 /** Convert an ISO string to the compact UTC form used by calendar links. */
 function toCalendarUTC(iso: string): string {
   return new Date(iso).toISOString().replace(/[-:]|\.\d{3}/g, "");
+}
+
+/**
+ * "Save to Google Calendar" URL for the whole wedding day, used by the cover.
+ * Spans the first event's start to the last event's end (Akad → Resepsi),
+ * and carries the title, date/time, venue and a short description.
+ */
+export function weddingGoogleCalendarUrl(): string {
+  const first = config.events[0];
+  const last = config.events[config.events.length - 1];
+  const venue = `${first.venue}, ${first.address}`;
+  const params = new URLSearchParams({
+    action: "TEMPLATE",
+    text: `The Wedding of ${config.bride.name} & ${config.groom.name}`,
+    dates: `${toCalendarUTC(first.start)}/${toCalendarUTC(last.end)}`,
+    details:
+      `Dengan memohon rahmat Tuhan, kami mengundang Anda menghadiri pernikahan ` +
+      `${config.bride.name} & ${config.groom.name}.\n\n` +
+      config.events
+        .map((e) => `${e.title}: ${e.dateLabel}, ${e.timeLabel} — ${e.venue}`)
+        .join("\n"),
+    location: venue,
+    ctz: "Asia/Jakarta",
+  });
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }
 
 /** Build a "Add to Google Calendar" URL for an event. */
