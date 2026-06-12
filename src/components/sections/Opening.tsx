@@ -1,65 +1,117 @@
+"use client";
+
 import { CalendarPlus } from "lucide-react";
 import { config } from "@/lib/config";
-import { weddingGoogleCalendarUrl } from "@/lib/calendar";
 import { Photo } from "@/components/ui/Photo";
 import { Reveal } from "@/components/ui/Reveal";
 
-export function Opening() {
-  return (
-    <section className="relative w-full overflow-hidden bg-gradient-to-b from-mist via-paper to-mist px-6 pt-16 pb-20">
-      {/* ── Title block ──────────────────────────────────────── */}
-      <Reveal className="mx-auto max-w-2xl text-center">
-        <p className="font-serif text-sm text-ash sm:text-base">The Wedding Of</p>
+/** ISO string → iCalendar UTC stamp, e.g. "2026-08-30T09:00:00+07:00" → "20260830T020000Z". */
+function toICSDate(iso: string): string {
+  return new Date(iso).toISOString().replace(/[-:]|\.\d{3}/g, "");
+}
 
-        <h2 className="mt-2 font-serif text-3xl font-bold leading-[1.15] text-ink sm:text-5xl">
+/** Escape iCalendar TEXT values (backslash, comma, semicolon, newline). */
+function escapeICS(value: string): string {
+  return value.replace(/([\\,;])/g, "\\$1").replace(/\n/g, "\\n");
+}
+
+/**
+ * Build a standards-compliant .ics for the wedding so guests can save it to
+ * their device calendar (no Google login / no redirect). Times come from the
+ * config and are emitted in UTC (Z), which every calendar app localises.
+ */
+function buildWeddingICS(): string {
+  const start = config.weddingDate;
+  const end = config.events[config.events.length - 1].end;
+  return [
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//Undangan Indri & Rafi//Wedding//ID",
+    "CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH",
+    "BEGIN:VEVENT",
+    "UID:wedding-indri-rafi-20260830@undangan",
+    `DTSTAMP:${toICSDate(new Date().toISOString())}`,
+    `DTSTART:${toICSDate(start)}`,
+    `DTEND:${toICSDate(end)}`,
+    "SUMMARY:Wedding Invitation",
+    `LOCATION:${escapeICS(config.location.name)}`,
+    "DESCRIPTION:Wedding invitation event",
+    "END:VEVENT",
+    "END:VCALENDAR",
+  ].join("\r\n");
+}
+
+export function Opening() {
+  /** Generate the .ics on the fly and hand it to the device calendar. */
+  function handleSaveCalendar() {
+    const blob = new Blob([buildWeddingICS()], {
+      type: "text/calendar;charset=utf-8",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "undangan-indri-rafi.ics";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  }
+
+  return (
+    <section className="relative flex min-h-[100svh] w-full flex-col overflow-hidden bg-mist">
+      {/* ── Full-cover background photo + subtle legibility wash ─ */}
+      <Photo
+        src={config.openingPhoto}
+        alt={`${config.bride.name} & ${config.groom.name}`}
+        priority
+        className="absolute inset-0 h-full w-full"
+        imgClassName="object-cover"
+      />
+      <div className="pointer-events-none absolute inset-0 bg-black/[0.12]" />
+
+      {/* ── Title block + Save-to-Calendar ───────────────────── */}
+      <Reveal className="relative z-10 px-6 pt-12 text-center sm:pt-16">
+        <p className="font-serif text-sm text-ink/80 sm:text-base">The Wedding Of</p>
+
+        <h2 className="mt-2 whitespace-nowrap font-serif text-[clamp(1.5rem,6.5vw,3rem)] font-bold leading-[1.15] text-ink">
           {config.bride.name}{" "}
           <span className="font-script text-[1.1em] font-normal italic">&amp;</span>
           <br />
           {config.groom.name}
         </h2>
 
-        <p className="mt-3 font-body text-base text-ash sm:text-lg">
+        <p className="mt-3 font-body text-base text-ink/80 sm:text-lg">
           {config.weddingDateLong}
         </p>
 
-        <a
-          href={weddingGoogleCalendarUrl()}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-4 inline-flex items-center gap-2 rounded-full border border-ink/25 bg-paper/70 px-5 py-2 font-body text-sm text-ink backdrop-blur transition-colors hover:bg-ink hover:text-paper sm:text-base"
+        <button
+          type="button"
+          onClick={handleSaveCalendar}
+          className="mt-4 inline-flex items-center gap-2 rounded-full border border-ink/40 bg-paper/50 px-5 py-2 font-body text-sm text-ink backdrop-blur transition-colors hover:bg-ink hover:text-paper sm:text-base"
         >
           <CalendarPlus className="h-4 w-4" />
-          <span className="leading-none">Save Google Calendar</span>
-        </a>
+          <span className="leading-none">Save to Calendar</span>
+        </button>
       </Reveal>
 
-      {/* ── Couple photo (blends into the light backdrop) ─────── */}
-      <Reveal delay={0.1} className="mt-10">
-        <Photo
-          src={config.openingPhoto}
-          alt={`${config.bride.name} & ${config.groom.name}`}
-          priority
-          className="mx-auto aspect-[780/1542] w-full max-w-md bg-transparent"
-          imgClassName="object-contain object-bottom"
-        />
-        {/* Soft fade so the photo melts into the verse card below. */}
-        <div className="pointer-events-none -mt-20 h-20 w-full bg-gradient-to-t from-mist to-transparent" />
-      </Reveal>
+      {/* Couple photo fills this flexible middle area. */}
+      <div className="flex-1" />
 
-      {/* ── Opening verse ────────────────────────────────────── */}
-      <Reveal delay={0.15} className="mx-auto -mt-6 max-w-xl">
-        <div className="paper-card px-6 py-8 text-center sm:px-9 sm:py-10">
+      {/* ── Opening verse card ───────────────────────────────── */}
+      <Reveal delay={0.15} className="relative z-10 px-4 pb-7 sm:pb-9">
+        <div className="mx-auto max-w-md rounded-[26px] bg-[#cccdcf]/85 px-6 py-7 text-center shadow-[0_18px_50px_-24px_rgba(20,20,20,0.45)] backdrop-blur-sm sm:px-8">
           <p
             dir="rtl"
             lang="ar"
-            className="text-xl leading-[2.5rem] text-ink sm:text-2xl sm:leading-[3rem]"
+            className="text-lg text-ink sm:text-xl"
           >
             {config.verse.arabic}
           </p>
-          <p className="mt-6 font-body text-base leading-relaxed text-ash sm:text-lg">
+          <p className="mt-2 font-body text-sm font-medium text-ink/85 sm:text-base">
             {config.verse.translation}
           </p>
-          <p className="mt-3 font-serif text-sm tracking-[0.2em] text-ink/70">
+          <p className="mt-2 font-body text-sm font-semibold text-ink/70">
             {config.verse.source}
           </p>
         </div>
