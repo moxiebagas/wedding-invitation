@@ -2,12 +2,18 @@
 
 import { useCountdown } from "@/hooks/useCountdown";
 
+// Labels use the singular base word; the trailing "s" is added by pluralize().
 const labels: { key: "days" | "hours" | "minutes" | "seconds"; label: string }[] = [
-  { key: "days", label: "Hari" },
-  { key: "hours", label: "Jam" },
-  { key: "minutes", label: "Menit" },
-  { key: "seconds", label: "Detik" },
+  { key: "days", label: "day" },
+  { key: "hours", label: "hour" },
+  { key: "minutes", label: "minute" },
+  { key: "seconds", label: "second" },
 ];
+
+/** Append "s" only when the count is not exactly 1 (e.g. 1 day, 2 days, 0 days). */
+function pluralize(count: number, word: string): string {
+  return count === 1 ? word : `${word}s`;
+}
 
 export function CountdownTimer({ target }: { target: string }) {
   const c = useCountdown(target);
@@ -17,13 +23,13 @@ export function CountdownTimer({ target }: { target: string }) {
       {labels.map(({ key, label }) => (
         <div
           key={key}
-          className="paper-card flex flex-1 flex-col items-center px-2 py-3 sm:px-3 sm:py-4"
+          className="flex flex-1 flex-col items-center rounded-2xl"
         >
-          <span className="font-serif text-2xl font-semibold tabular-nums text-ink sm:text-3xl">
+          <span className="font-serif text-3xl font-semibold leading-none tabular-nums text-white sm:text-4xl">
             {String(c[key]).padStart(2, "0")}
           </span>
-          <span className="mt-1 font-body text-xs uppercase tracking-widest text-ash">
-            {label}
+          <span className="mt-2 font-body text-[0.6rem] uppercase tracking-[0.25em] text-white/70 sm:text-[0.65rem]">
+            {pluralize(c[key], label)}
           </span>
         </div>
       ))}

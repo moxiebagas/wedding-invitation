@@ -49,7 +49,7 @@ export const config = {
   coverPhoto: "/images/cover.png",
 
   // Full-body portrait shown on the opening section (blends into the backdrop).
-  openingPhoto: "/images/opening.png",
+  openingPhoto: "/images/bg-opening.png",
 
   // ── Opening verse ─────────────────────────────────────────
   verse: {
