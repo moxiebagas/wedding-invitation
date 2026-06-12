@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #ffffff;
+  --accent: #141414;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    background-color: var(--bg);
+    color: #141414;
+    font-family: var(--font-cormorant), serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+}
+
+@layer components {
+  /* Thin neutral divider with a center diamond, used between sections. */
+  .rule-divider {
+    @apply mx-auto flex items-center justify-center gap-3 text-ash;
+  }
+  .rule-divider::before,
+  .rule-divider::after {
+    content: "";
+    @apply h-px w-12 bg-gradient-to-r from-transparent to-ink/30;
+  }
+  .rule-divider::after {
+    @apply bg-gradient-to-l;
+  }
+
+  /* Clean white card with a soft neutral shadow. */
+  .paper-card {
+    @apply rounded-2xl border border-ink/10 bg-white shadow-[0_18px_50px_-24px_rgba(20,20,20,0.35)];
+  }
+}
+
+@layer utilities {
+  .text-shadow-soft {
+    text-shadow: 0 2px 16px rgba(0, 0, 0, 0.45);
+  }
+  .text-shadow-light {
+    text-shadow: 0 1px 12px rgba(255, 255, 255, 0.6);
+  }
+  .writing-vertical {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+  }
+  /* Editorial black-and-white treatment for interior photography. */
+  .photo-bw {
+    filter: grayscale(1) contrast(1.03);
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Respect reduced-motion preferences. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
