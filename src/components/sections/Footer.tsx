@@ -24,7 +24,6 @@ export function Footer() {
         <h2 className="mt-3 font-script text-5xl text-white sm:text-6xl">
           {config.bride.name.split(" ")[0]} &amp; {config.groom.name.split(" ")[1]}
         </h2>
-        <p className="mt-8 font-body text-xs text-white/50">{config.weddingDateLong}</p>
       </Reveal>
     </footer>
   );

@@ -46,7 +46,7 @@ export const config = {
 
   // ── Cover ─────────────────────────────────────────────────
   defaultGuest: "Tamu Undangan",
-  coverPhoto: "/images/cover.png",
+  coverPhoto: "/images/cover.webp",
 
   // Full-body portrait shown on the opening section (blends into the backdrop).
   openingPhoto: "/images/bg-opening.png",
@@ -89,9 +89,21 @@ export const config = {
   },
 
   // ── Love story ────────────────────────────────────────────
+  // `points` is a list — add/remove/edit entries to grow the timeline.
   story: {
     videoUrl: "https://www.youtube.com/embed/ScMzIvxBSi4",
-    text: "Pada tahun 2020, takdir mempertemukan kami dalam sebuah kesederhanaan yang tak pernah kami duga. Dari obrolan ringan, tumbuh rasa yang perlahan menguat, melewati suka dan duka bersama. Kini, dengan mengucap syukur, kami memutuskan untuk melangkah ke jenjang yang lebih serius dan menyatukan dua hati dalam ikatan yang suci.",
+    points: [
+      {
+        emoji: "💼",
+        title: "Awal Pertemuan Sederhana",
+        text: "Pada tahun 2020, takdir mempertemukan kami dalam sebuah kesederhanaan yang tak pernah kami duga. Dari obrolan ringan, tumbuh rasa yang perlahan menguat, melewati suka dan duka bersama.",
+      },
+      {
+        emoji: "💍",
+        title: "Melangkah ke Jenjang yang Serius",
+        text: "Kini, dengan mengucap syukur, kami memutuskan untuk melangkah ke jenjang yang lebih serius dan menyatukan dua hati dalam ikatan yang suci. Dengan restu kedua keluarga, kami mantap menyatukan langkah menuju pernikahan.",
+      },
+    ],
   },
 
   // ── Gallery (photos + videos) ─────────────────────────────

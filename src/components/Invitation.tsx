@@ -221,8 +221,20 @@ export function Invitation({ guestName }: { guestName: string }) {
             overlayClass="bg-black/55"
           />
           <Events />
-          <LoveStory />
-          <Gallery />
+          {/* Love Story + Gallery share one continuous backdrop */}
+          <div className="relative isolate overflow-hidden bg-ink">
+            <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/bg-story.png"
+                alt=""
+                className="h-full w-full object-cover opacity-60"
+              />
+              <div className="absolute inset-0 bg-black/70" />
+            </div>
+            <LoveStory />
+            <Gallery />
+          </div>
           <Wishes defaultName={guestName} />
           <Footer />
         </motion.div>
