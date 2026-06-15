@@ -27,7 +27,7 @@ export const config = {
     shortName: "M. Rafi Herman S, Kom.",
     order: "Putra Pertama dari",
     parents: "Bpk. Herholo & Ibu Nofiati",
-    instagram: "rafiherman",
+    instagram: "muhammadrafiherman",
     photo: "/images/groom.jpg",
   },
   bride: {
@@ -35,7 +35,7 @@ export const config = {
     shortName: "Indri Anjari S, Pd., Gr.",
     order: "Putri Kedua dari",
     parents: "Bpk. Hendar Suwantar & Ibu Ida Suriyani",
-    instagram: "indrianjari",
+    instagram: "indri.anjarii",
     photo: "/images/bride.jpg",
   },
 
@@ -91,7 +91,8 @@ export const config = {
   // ── Love story ────────────────────────────────────────────
   // `points` is a list — add/remove/edit entries to grow the timeline.
   story: {
-    videoUrl: "https://www.youtube.com/embed/ScMzIvxBSi4",
+    // Self-hosted love-story video — replace the file at public/videos/love-story.mp4.
+    video: "/videos/love-story.mp4",
     points: [
       {
         emoji: "💼",
@@ -99,8 +100,23 @@ export const config = {
         text: "Pada tahun 2020, takdir mempertemukan kami dalam sebuah kesederhanaan yang tak pernah kami duga. Dari obrolan ringan, tumbuh rasa yang perlahan menguat, melewati suka dan duka bersama.",
       },
       {
-        emoji: "💍",
-        title: "Melangkah ke Jenjang yang Serius",
+        emoji: "1",
+        title: "Melangkah ke Jenjang yang Serius1",
+        text: "Kini, dengan mengucap syukur, kami memutuskan untuk melangkah ke jenjang yang lebih serius dan menyatukan dua hati dalam ikatan yang suci. Dengan restu kedua keluarga, kami mantap menyatukan langkah menuju pernikahan.",
+      },
+      {
+        emoji: "2",
+        title: "Melangkah ke Jenjang yang Serius2",
+        text: "Kini, dengan mengucap syukur, kami memutuskan untuk melangkah ke jenjang yang lebih serius dan menyatukan dua hati dalam ikatan yang suci. Dengan restu kedua keluarga, kami mantap menyatukan langkah menuju pernikahan.",
+      },
+      {
+        emoji: "3",
+        title: "Melangkah ke Jenjang yang Serius3",
+        text: "Kini, dengan mengucap syukur, kami memutuskan untuk melangkah ke jenjang yang lebih serius dan menyatukan dua hati dalam ikatan yang suci. Dengan restu kedua keluarga, kami mantap menyatukan langkah menuju pernikahan.",
+      },
+      {
+        emoji: "4",
+        title: "Melangkah ke Jenjang yang Serius4",
         text: "Kini, dengan mengucap syukur, kami memutuskan untuk melangkah ke jenjang yang lebih serius dan menyatukan dua hati dalam ikatan yang suci. Dengan restu kedua keluarga, kami mantap menyatukan langkah menuju pernikahan.",
       },
     ],

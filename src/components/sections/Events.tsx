@@ -4,11 +4,10 @@ import { CalendarDays, CalendarPlus, Clock, MapPin } from "lucide-react";
 import { config, type EventDetail } from "@/lib/config";
 import { mapsDirectionsUrl } from "@/lib/calendar";
 import { CountdownTimer } from "@/components/CountdownTimer";
-import { Photo } from "@/components/ui/Photo";
+import { ParallaxBg } from "@/components/ui/ParallaxBg";
 import { Reveal } from "@/components/ui/Reveal";
 
-// New full-bleed backdrop for this slide (couple reading). Photo degrades
-// gracefully until the file is dropped into public/images.
+// Full-bleed backdrop for this slide (couple reading).
 const EVENT_BG = "/images/bg-event.jpg";
 
 /* ── Device-calendar (.ics) — same approach as Opening.tsx, no Google login ── */
@@ -96,7 +95,7 @@ function EventCard({ event, delay }: { event: EventDetail; delay: number }) {
             href={mapsDirectionsUrl(`${event.venue} ${event.address}`)}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-ink px-4 py-2.5 font-body text-sm font-medium text-paper transition-transform hover:scale-[1.03] sm:w-auto"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-ink px-4 py-2.5 font-body text-sm font-medium text-paper transition-[transform,background,color] duration-300 hover:-translate-y-0.5 hover:bg-graphite sm:w-auto"
           >
             <MapPin className="h-4 w-4" />
             Lihat Lokasi
@@ -104,7 +103,7 @@ function EventCard({ event, delay }: { event: EventDetail; delay: number }) {
           <button
             type="button"
             onClick={() => saveEventToCalendar(event)}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-lg border-2 border-ink px-4 py-2.5 font-body text-sm text-ink transition-colors hover:bg-ink hover:text-paper sm:w-auto"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-lg border-2 border-ink px-4 py-2.5 font-body text-sm text-ink transition-[transform,background,color] duration-300 hover:-translate-y-0.5 hover:bg-ink hover:text-paper sm:w-auto"
           >
             <CalendarPlus className="h-4 w-4" />
             Save to Calendar
@@ -123,24 +122,14 @@ export function Events() {
       id="acara"
       className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-ink py-16"
     >
-      {/* Full-cover backdrop + heavy legibility overlay (SVG: 60% black) */}
-      <Photo
-        src={EVENT_BG}
-        alt={`${config.bride.name} & ${config.groom.name}`}
-        priority
-        className="absolute inset-0 h-full w-full"
-        imgClassName="object-cover"
-      />
-      <div className="pointer-events-none absolute inset-0 bg-black/60" />
+      {/* Full-cover backdrop (scroll fade + parallax) + 60% legibility overlay */}
+      <ParallaxBg src={EVENT_BG} overlayClassName="bg-black/60" />
 
       <div className="relative z-10 w-full px-6">
         {/* Title */}
         <Reveal className="text-center">
-          <p className="font-serif text-sm uppercase tracking-[0.45em] text-white/75 sm:text-base">
-            The Wedding Day
-          </p>
           <h2 className="font-script text-5xl leading-tight text-white sm:text-6xl">
-            Event
+            Wedding Event
           </h2>
         </Reveal>
 

@@ -13,6 +13,7 @@ import { Gallery } from "@/components/sections/Gallery";
 import { Wishes } from "@/components/sections/Wishes";
 import { Footer } from "@/components/sections/Footer";
 import { MusicToggle } from "@/components/MusicToggle";
+import { ParallaxBg } from "@/components/ui/ParallaxBg";
 import { Reveal } from "@/components/ui/Reveal";
 
 // Person-slide artwork (each: a dimmed mirrored backdrop + a sharp portrait).
@@ -73,15 +74,8 @@ function PersonSlide({
 
   return (
     <section className="relative flex min-h-[100svh] w-full items-center justify-center overflow-hidden bg-ink">
-      {/* 1 — Full-bleed mirrored backdrop + overlays */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={backdrop}
-        alt=""
-        aria-hidden
-        className="absolute inset-0 h-full w-full object-cover"
-      />
-      <div className={cn("absolute inset-0", overlayClass)} />
+      {/* 1 — Full-bleed backdrop (scroll fade + parallax) + overlays */}
+      <ParallaxBg src={backdrop} overlayClassName={overlayClass} />
       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />
 
       {/* Composition frame — mirrors the 390×844 mockup, centered in the slide */}
@@ -127,7 +121,7 @@ function PersonSlide({
             hugRight ? "text-right" : "text-left",
           )}
         >
-          <h3 className="font-script text-3xl leading-tight text-white text-shadow-soft sm:text-4xl">
+          <h3 className="font-playball text-3xl leading-tight text-white text-shadow-soft sm:text-4xl">
             {person.shortName}
           </h3>
 
@@ -223,15 +217,11 @@ export function Invitation({ guestName }: { guestName: string }) {
           <Events />
           {/* Love Story + Gallery share one continuous backdrop */}
           <div className="relative isolate overflow-hidden bg-ink">
-            <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/images/bg-story.png"
-                alt=""
-                className="h-full w-full object-cover opacity-60"
-              />
-              <div className="absolute inset-0 bg-black/70" />
-            </div>
+            <ParallaxBg
+              src="/images/bg-story.png"
+              overlayClassName="bg-black/70"
+              className="-z-10"
+            />
             <LoveStory />
             <Gallery />
           </div>

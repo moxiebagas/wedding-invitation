@@ -18,6 +18,7 @@ import {
   type Wish,
 } from "@/lib/supabase";
 import { cn, timeAgo } from "@/lib/utils";
+import { ParallaxBg } from "@/components/ui/ParallaxBg";
 import { Reveal } from "@/components/ui/Reveal";
 
 // Dark backdrop shared with the moody slides — swap to a dedicated /images/bg-wishes.* if added.
@@ -104,15 +105,8 @@ export function Wishes({ defaultName }: { defaultName: string }) {
 
   return (
     <section id="ucapan" className="relative w-full overflow-hidden bg-ink px-6 py-20">
-      {/* Full-cover backdrop + dark overlay (SVG: 60% black) */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={WISHES_BG}
-        alt=""
-        aria-hidden
-        className="absolute inset-0 h-full w-full object-cover"
-      />
-      <div className="pointer-events-none absolute inset-0 bg-black/65" />
+      {/* Full-cover backdrop (scroll fade + parallax) + dark overlay */}
+      <ParallaxBg src={WISHES_BG} overlayClassName="bg-black/65" />
 
       <div className="relative z-10">
         <Reveal className="text-center">
@@ -197,7 +191,7 @@ export function Wishes({ defaultName }: { defaultName: string }) {
             <button
               type="submit"
               disabled={submitting}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-6 py-3 font-body text-lg font-medium text-white shadow-[0_12px_30px_-12px_rgba(0,0,0,0.9)] ring-1 ring-white/15 transition-transform hover:scale-[1.02] disabled:opacity-60"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-6 py-3 font-body text-lg font-medium text-white shadow-[0_12px_30px_-12px_rgba(0,0,0,0.9)] ring-1 ring-white/15 transition-[transform,background] duration-300 hover:-translate-y-0.5 hover:bg-graphite disabled:opacity-60 disabled:hover:translate-y-0"
             >
               {submitting ? (
                 <Loader2 className="h-5 w-5 animate-spin" />

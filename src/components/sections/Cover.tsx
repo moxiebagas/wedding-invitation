@@ -18,7 +18,6 @@ export function Cover({ guestName, onOpen }: CoverProps) {
         src={config.coverPhoto}
         alt="Indri & Rafi"
         priority
-        kenBurns
         className="absolute inset-0 h-full w-full"
       />
       {/* Light wash at the top (for dark text) + soft darkening at the bottom (for white text) */}
@@ -30,7 +29,7 @@ export function Cover({ guestName, onOpen }: CoverProps) {
         initial={{ opacity: 0, y: -16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.9, ease: "easeOut" }}
-        className="absolute left-0 top-0 z-10 max-w-[80%] p-7 text-left sm:p-10"
+        className="absolute left-0 top-[12%] z-10 max-w-[80%] px-7 text-left sm:top-[14%] sm:px-10"
       >
         <p className="font-serif text-xs uppercase tracking-[0.3em] text-ink/70 sm:text-sm">
           The Wedding Of
@@ -67,9 +66,9 @@ export function Cover({ guestName, onOpen }: CoverProps) {
           onClick={onOpen}
           whileHover={{ scale: 1.04 }}
           whileTap={{ scale: 0.97 }}
-          className="mt-5 inline-flex items-center gap-2 rounded-full bg-white px-7 py-3 text-ink shadow-[0_10px_30px_-10px_rgba(0,0,0,0.6)] transition-colors hover:bg-ink hover:text-white"
+          className="group mt-5 inline-flex items-center gap-2 rounded-full bg-white px-7 py-3 text-ink shadow-[0_10px_30px_-10px_rgba(0,0,0,0.6)] transition-colors hover:bg-ink hover:text-white"
         >
-          <MailOpen className="h-5 w-5" />
+          <MailOpen className="h-5 w-5 transition-transform group-hover:animate-bounce-soft group-focus-visible:animate-bounce-soft" />
           <span className="font-script text-xl leading-none">Open Invitation</span>
         </motion.button>
       </motion.div>

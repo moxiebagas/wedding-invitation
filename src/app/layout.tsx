@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Playfair_Display, Cormorant_Garamond, Great_Vibes } from "next/font/google";
+import { Playfair_Display, Cormorant_Garamond, Great_Vibes, Playball } from "next/font/google";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -20,6 +20,13 @@ const greatVibes = Great_Vibes({
   subsets: ["latin"],
   weight: ["400"],
   variable: "--font-greatvibes",
+  display: "swap",
+});
+
+const playball = Playball({
+  subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-playball",
   display: "swap",
 });
 
@@ -46,7 +53,7 @@ export default function RootLayout({
   return (
     <html
       lang="id"
-      className={`${playfair.variable} ${cormorant.variable} ${greatVibes.variable}`}
+      className={`${playfair.variable} ${cormorant.variable} ${greatVibes.variable} ${playball.variable}`}
     >
       <body>{children}</body>
     </html>

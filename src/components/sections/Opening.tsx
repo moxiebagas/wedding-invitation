@@ -2,8 +2,7 @@
 
 import { CalendarPlus } from "lucide-react";
 import { config } from "@/lib/config";
-import { Photo } from "@/components/ui/Photo";
-import { Reveal } from "@/components/ui/Reveal";
+import { InvitationSection } from "@/components/ui/InvitationSection";
 
 /** ISO string → iCalendar UTC stamp, e.g. "2026-08-30T09:00:00+07:00" → "20260830T020000Z". */
 function toICSDate(iso: string): string {
@@ -59,19 +58,15 @@ export function Opening() {
   }
 
   return (
-    <section className="relative flex min-h-[100svh] w-full flex-col overflow-hidden bg-mist">
-      {/* ── Full-cover background photo + subtle legibility wash ─ */}
-      <Photo
-        src={config.openingPhoto}
-        alt={`${config.bride.name} & ${config.groom.name}`}
-        priority
-        className="absolute inset-0 h-full w-full"
-        imgClassName="object-cover"
-      />
-      <div className="pointer-events-none absolute inset-0 bg-black/[0.12]" />
-
+    <InvitationSection
+      backgroundImage={config.openingPhoto}
+      overlayClassName="bg-black/[0.12]"
+      className="flex min-h-[100svh] flex-col bg-mist"
+      contentClassName="flex flex-1 flex-col"
+      contentDelay={0.25}
+    >
       {/* ── Title block + Save-to-Calendar ───────────────────── */}
-      <Reveal className="relative z-10 px-6 pt-12 text-center sm:pt-16">
+      <div className="px-6 pt-12 text-center sm:pt-16">
         <p className="font-serif text-sm text-ink/80 sm:text-base">The Wedding Of</p>
 
         <h2 className="mt-2 whitespace-nowrap font-serif text-[clamp(1.5rem,6.5vw,3rem)] font-bold leading-[1.15] text-ink">
@@ -88,24 +83,20 @@ export function Opening() {
         <button
           type="button"
           onClick={handleSaveCalendar}
-          className="mt-4 inline-flex items-center gap-2 rounded-full border border-ink/40 bg-paper/50 px-5 py-2 font-body text-sm text-ink backdrop-blur transition-colors hover:bg-ink hover:text-paper sm:text-base"
+          className="mt-4 inline-flex items-center gap-2 rounded-full border border-ink/40 bg-paper/50 px-5 py-2 font-body text-sm text-ink backdrop-blur transition-[transform,background,color] duration-300 hover:-translate-y-0.5 hover:bg-ink hover:text-paper sm:text-base"
         >
           <CalendarPlus className="h-4 w-4" />
           <span className="leading-none">Save to Calendar</span>
         </button>
-      </Reveal>
+      </div>
 
       {/* Couple photo fills this flexible middle area. */}
       <div className="flex-1" />
 
       {/* ── Opening verse card ───────────────────────────────── */}
-      <Reveal delay={0.15} className="relative z-10 px-4 pb-7 sm:pb-9">
+      <div className="px-4 pb-7 sm:pb-9">
         <div className="mx-auto max-w-md rounded-[26px] bg-[#cccdcf]/85 px-6 py-7 text-center shadow-[0_18px_50px_-24px_rgba(20,20,20,0.45)] backdrop-blur-sm sm:px-8">
-          <p
-            dir="rtl"
-            lang="ar"
-            className="text-lg text-ink sm:text-xl"
-          >
+          <p dir="rtl" lang="ar" className="text-lg text-ink sm:text-xl">
             {config.verse.arabic}
           </p>
           <p className="mt-2 font-body text-sm font-medium text-ink/85 sm:text-base">
@@ -115,7 +106,7 @@ export function Opening() {
             {config.verse.source}
           </p>
         </div>
-      </Reveal>
-    </section>
+      </div>
+    </InvitationSection>
   );
 }
