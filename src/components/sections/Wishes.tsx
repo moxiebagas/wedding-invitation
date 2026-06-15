@@ -14,8 +14,8 @@ import {
   attendanceLabel,
   isSupabaseConfigured,
   supabase,
-  type Attendance,
-  type Wish,
+  type AttendanceStatus,
+  type RSVP,
 } from "@/lib/supabase";
 import { cn, timeAgo } from "@/lib/utils";
 import { ParallaxBg } from "@/components/ui/ParallaxBg";
@@ -24,27 +24,33 @@ import { Reveal } from "@/components/ui/Reveal";
 // Dark backdrop shared with the moody slides — swap to a dedicated /images/bg-wishes.* if added.
 const WISHES_BG = "/images/bg-bride.png";
 
-// Mockup shows two choices; the Supabase enum still accepts "ragu" if needed later.
-const attendanceOptions: { value: Attendance; label: string }[] = [
-  { value: "hadir", label: "Hadir" },
-  { value: "tidak_hadir", label: "Tidak Hadir" },
+const attendanceOptions: { value: AttendanceStatus; label: string }[] = [
+  { value: "attending", label: "Hadir" },
+  { value: "not_attending", label: "Tidak Hadir" },
+  { value: "maybe", label: "Masih Ragu" },
 ];
+
+/** Log technical details only in development. */
+function logDev(...args: unknown[]) {
+  if (process.env.NODE_ENV === "development") console.error(...args);
+}
 
 export function Wishes({ defaultName }: { defaultName: string }) {
   const [name, setName] = useState(defaultName);
-  const [attendance, setAttendance] = useState<Attendance>("hadir");
+  const [attendance, setAttendance] = useState<AttendanceStatus>("attending");
   const [message, setMessage] = useState("");
-  const [wishes, setWishes] = useState<Wish[]>([]);
+  const [rsvps, setRsvps] = useState<RSVP[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  // Prefill from the ?to= guest, skipping the generic fallback.
+  // Prefill from the ?to= guest, skipping the generic fallback. Stays editable.
   useEffect(() => {
     if (defaultName && defaultName !== "Tamu Undangan") setName(defaultName);
   }, [defaultName]);
 
+  // Fetch existing RSVPs (newest first).
   useEffect(() => {
     let active = true;
     async function load() {
@@ -53,13 +59,17 @@ export function Wishes({ defaultName }: { defaultName: string }) {
         return;
       }
       const { data, error } = await supabase
-        .from("wishes")
+        .from("rsvps")
         .select("*")
         .order("created_at", { ascending: false })
         .limit(100);
       if (!active) return;
-      if (error) setError("Gagal memuat ucapan.");
-      else setWishes((data as Wish[]) ?? []);
+      if (error) {
+        logDev("Failed to load RSVPs:", error);
+        setError("Gagal memuat ucapan.");
+      } else {
+        setRsvps((data as RSVP[]) ?? []);
+      }
       setLoading(false);
     }
     load();
@@ -72,8 +82,14 @@ export function Wishes({ defaultName }: { defaultName: string }) {
     e.preventDefault();
     setError(null);
     setSuccess(null);
-    if (!name.trim() || !message.trim()) {
-      setError("Nama dan ucapan wajib diisi.");
+
+    // Required: guest name + attendance status (message is optional).
+    if (!name.trim()) {
+      setError("Nama wajib diisi.");
+      return;
+    }
+    if (!attendance) {
+      setError("Silakan pilih konfirmasi kehadiran.");
       return;
     }
     if (!supabase) {
@@ -84,23 +100,25 @@ export function Wishes({ defaultName }: { defaultName: string }) {
     setSubmitting(true);
     const payload = {
       guest_name: name.trim().slice(0, 80),
-      attendance,
-      message: message.trim().slice(0, 1000),
+      attendance_status: attendance,
+      message: message.trim() ? message.trim().slice(0, 1000) : null,
     };
     const { data, error } = await supabase
-      .from("wishes")
+      .from("rsvps")
       .insert(payload)
       .select()
       .single();
     setSubmitting(false);
 
     if (error) {
+      logDev("Failed to submit RSVP:", error);
       setError("Gagal mengirim ucapan. Coba lagi.");
       return;
     }
-    setWishes((prev) => [data as Wish, ...prev]);
-    setMessage("");
-    setSuccess("Terima kasih! Ucapan Anda telah terkirim.");
+
+    setRsvps((prev) => [data as RSVP, ...prev]);
+    setMessage(""); // reset only the message; keep the (URL) guest name
+    setSuccess("Terima kasih! Konfirmasi & ucapan Anda telah terkirim.");
   }
 
   return (
@@ -110,7 +128,7 @@ export function Wishes({ defaultName }: { defaultName: string }) {
 
       <div className="relative z-10">
         <Reveal className="text-center">
-          <h2 className="font-script text-4xl text-white sm:text-5xl">Wishes</h2>
+          <h2 className="font-script text-4xl text-white sm:text-5xl">Doa &amp; Ucapan</h2>
         </Reveal>
 
         {/* ── Form card (glassy, outlined) ─────────────────────── */}
@@ -121,11 +139,15 @@ export function Wishes({ defaultName }: { defaultName: string }) {
           >
             {/* Name */}
             <div>
-              <label className="mb-2 flex items-center gap-2 font-body text-base font-medium text-white">
+              <label
+                htmlFor="rsvp-name"
+                className="mb-2 flex items-center gap-2 font-body text-base font-medium text-white"
+              >
                 <Users className="h-5 w-5" />
                 Nama
               </label>
               <input
+                id="rsvp-name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Nama Anda"
@@ -134,12 +156,12 @@ export function Wishes({ defaultName }: { defaultName: string }) {
               />
             </div>
 
-            {/* RSVP */}
+            {/* Attendance status */}
             <div>
-              <label className="mb-2 flex items-center gap-2 font-body text-base font-medium text-white">
+              <span className="mb-2 flex items-center gap-2 font-body text-base font-medium text-white">
                 <CalendarCheck className="h-5 w-5" />
                 RSVP
-              </label>
+              </span>
               <div className="space-y-2 pl-1">
                 {attendanceOptions.map((opt) => {
                   const active = attendance === opt.value;
@@ -147,6 +169,7 @@ export function Wishes({ defaultName }: { defaultName: string }) {
                     <button
                       key={opt.value}
                       type="button"
+                      aria-pressed={active}
                       onClick={() => setAttendance(opt.value)}
                       className="flex items-center gap-2.5 font-body text-base text-white"
                     >
@@ -165,16 +188,20 @@ export function Wishes({ defaultName }: { defaultName: string }) {
               </div>
             </div>
 
-            {/* Message */}
+            {/* Message (optional) */}
             <div>
-              <label className="mb-2 flex items-center gap-2 font-body text-base font-medium text-white">
+              <label
+                htmlFor="rsvp-message"
+                className="mb-2 flex items-center gap-2 font-body text-base font-medium text-white"
+              >
                 <MessageCircle className="h-5 w-5" />
                 Pesan Untuk Mempelai
               </label>
               <textarea
+                id="rsvp-message"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                placeholder="Tuliskan doa & ucapan Anda…"
+                placeholder="Tuliskan doa & ucapan Anda… (opsional)"
                 rows={4}
                 maxLength={1000}
                 className="w-full resize-none rounded-3xl bg-white/90 px-4 py-3 font-body text-base text-ink outline-none ring-1 ring-white/40 transition placeholder:text-ash/60 focus:ring-2 focus:ring-white"
@@ -182,16 +209,20 @@ export function Wishes({ defaultName }: { defaultName: string }) {
             </div>
 
             {error && (
-              <p className="font-body text-sm font-semibold text-white">{error}</p>
+              <p role="alert" className="font-body text-sm font-semibold text-white">
+                {error}
+              </p>
             )}
             {success && (
-              <p className="font-body text-sm font-semibold text-white/90">{success}</p>
+              <p role="status" className="font-body text-sm font-semibold text-white/90">
+                {success}
+              </p>
             )}
 
             <button
               type="submit"
               disabled={submitting}
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-6 py-3 font-body text-lg font-medium text-white shadow-[0_12px_30px_-12px_rgba(0,0,0,0.9)] ring-1 ring-white/15 transition-[transform,background] duration-300 hover:-translate-y-0.5 hover:bg-graphite disabled:opacity-60 disabled:hover:translate-y-0"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-ink px-6 py-3 font-body text-lg font-medium text-white shadow-[0_12px_30px_-12px_rgba(0,0,0,0.9)] ring-1 ring-white/15 transition-[transform,background] duration-300 hover:-translate-y-0.5 hover:bg-graphite focus-visible:-translate-y-0.5 focus-visible:bg-graphite disabled:opacity-60 disabled:hover:translate-y-0"
             >
               {submitting ? (
                 <Loader2 className="h-5 w-5 animate-spin" />
@@ -205,7 +236,7 @@ export function Wishes({ defaultName }: { defaultName: string }) {
           </form>
         </Reveal>
 
-        {/* ── Wish list (white cards, scrollable) ──────────────── */}
+        {/* ── RSVP list (white cards, scrollable) ──────────────── */}
         <Reveal delay={0.15} className="mx-auto mt-8 max-w-xl">
           {loading ? (
             <p className="text-center font-body text-white/70">Memuat ucapan…</p>
@@ -213,15 +244,15 @@ export function Wishes({ defaultName }: { defaultName: string }) {
             <p className="text-center font-body text-white/70">
               Hubungkan Supabase untuk menampilkan ucapan.
             </p>
-          ) : wishes.length === 0 ? (
+          ) : rsvps.length === 0 ? (
             <p className="text-center font-body text-white/70">
               Jadilah yang pertama memberi ucapan 💌
             </p>
           ) : (
             <div className="no-scrollbar max-h-[460px] space-y-3 overflow-y-auto pr-1">
-              {wishes.map((w, i) => (
+              {rsvps.map((r, i) => (
                 <motion.div
-                  key={w.id}
+                  key={r.id}
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: Math.min(i * 0.04, 0.3) }}
@@ -230,24 +261,31 @@ export function Wishes({ defaultName }: { defaultName: string }) {
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-1.5">
                       <span className="border-b-2 border-ink/70 pb-0.5 font-serif text-lg font-semibold text-ink">
-                        {w.guest_name}
+                        {r.guest_name}
                       </span>
-                      {w.attendance === "hadir" ? (
+                      {r.attendance_status === "attending" ? (
                         <CheckCircle2 className="h-4 w-4 text-emerald-500" />
                       ) : (
                         <span
                           className="h-2.5 w-2.5 rounded-full bg-ash/50"
-                          title={attendanceLabel[w.attendance]}
+                          title={attendanceLabel[r.attendance_status]}
                         />
                       )}
                     </div>
                     <span className="shrink-0 font-body text-xs text-ash">
-                      {timeAgo(w.created_at)}
+                      {timeAgo(r.created_at)}
                     </span>
                   </div>
-                  <p className="mt-2 font-body text-sm leading-relaxed text-graphite">
-                    {w.message}
+
+                  <p className="mt-1 font-body text-xs uppercase tracking-wide text-ash">
+                    {attendanceLabel[r.attendance_status]}
                   </p>
+
+                  {r.message && (
+                    <p className="mt-2 font-body text-sm leading-relaxed text-graphite">
+                      {r.message}
+                    </p>
+                  )}
                 </motion.div>
               ))}
             </div>

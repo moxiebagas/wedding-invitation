@@ -68,7 +68,7 @@ export function Cover({ guestName, onOpen }: CoverProps) {
           whileTap={{ scale: 0.97 }}
           className="group mt-5 inline-flex items-center gap-2 rounded-full bg-white px-7 py-3 text-ink shadow-[0_10px_30px_-10px_rgba(0,0,0,0.6)] transition-colors hover:bg-ink hover:text-white"
         >
-          <MailOpen className="h-5 w-5 transition-transform group-hover:animate-bounce-soft group-focus-visible:animate-bounce-soft" />
+          <MailOpen className="h-5 w-5 animate-bounce transition-transform" />
           <span className="font-script text-xl leading-none">Open Invitation</span>
         </motion.button>
       </motion.div>
