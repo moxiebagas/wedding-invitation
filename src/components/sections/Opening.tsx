@@ -66,7 +66,7 @@ export function Opening() {
       contentDelay={0.25}
     >
       {/* ── Title block + Save-to-Calendar ───────────────────── */}
-      <div className="px-6 pt-12 text-center sm:pt-16">
+      <div className="px-6 pt-9 text-center sm:pt-16">
         <p className="font-serif text-sm text-ink/80 sm:text-base">The Wedding Of</p>
 
         <h2 className="mt-2 whitespace-nowrap font-serif text-[clamp(1.5rem,6.5vw,3rem)] font-bold leading-[1.15] text-ink">

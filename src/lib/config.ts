@@ -92,32 +92,32 @@ export const config = {
   // `points` is a list — add/remove/edit entries to grow the timeline.
   story: {
     // Self-hosted love-story video — replace the file at public/videos/love-story.mp4.
-    video: "/videos/love-story.mp4",
+    // video: "/videos/love-story.mp4",
     points: [
       {
-        emoji: "💼",
-        title: "Awal Pertemuan Sederhana",
-        text: "Pada tahun 2020, takdir mempertemukan kami dalam sebuah kesederhanaan yang tak pernah kami duga. Dari obrolan ringan, tumbuh rasa yang perlahan menguat, melewati suka dan duka bersama.",
+        emoji: "🤝",
+        title: "Awal Pertemuan",
+        text: "2011 menjadi awal kami dipertemukan secara sederhana, tanpa pernah menyangka akan menjadi bagian dari perjalanan panjang hidup kami.",
       },
       {
-        emoji: "1",
-        title: "Melangkah ke Jenjang yang Serius1",
-        text: "Kini, dengan mengucap syukur, kami memutuskan untuk melangkah ke jenjang yang lebih serius dan menyatukan dua hati dalam ikatan yang suci. Dengan restu kedua keluarga, kami mantap menyatukan langkah menuju pernikahan.",
+        emoji: "🌿",
+        title: "Tumbuh dan Berpisah",
+        text: "Pada 2012 kami mulai saling mengenal dan tumbuh bersama, sebelum akhirnya berpisah pada 2013–2014 untuk menjalani hidup masing-masing.",
       },
       {
-        emoji: "2",
-        title: "Melangkah ke Jenjang yang Serius2",
-        text: "Kini, dengan mengucap syukur, kami memutuskan untuk melangkah ke jenjang yang lebih serius dan menyatukan dua hati dalam ikatan yang suci. Dengan restu kedua keluarga, kami mantap menyatukan langkah menuju pernikahan.",
+        emoji: "🌤️",
+        title: "Kembali Bertemu",
+        text: "Tahun 2015 kami dipertemukan kembali, kali ini sebagai teman. Dari sana, hubungan kami tumbuh dengan lebih tenang dan dewasa.",
       },
       {
-        emoji: "3",
-        title: "Melangkah ke Jenjang yang Serius3",
-        text: "Kini, dengan mengucap syukur, kami memutuskan untuk melangkah ke jenjang yang lebih serius dan menyatukan dua hati dalam ikatan yang suci. Dengan restu kedua keluarga, kami mantap menyatukan langkah menuju pernikahan.",
+        emoji: "💫",
+        title: "Menemukan Kembali Rasa",
+        text: "Pada 2019, kami menyadari bahwa rasa itu tidak pernah benar-benar hilang, kami kembali memutuskan untuk bersama.",
       },
       {
-        emoji: "4",
-        title: "Melangkah ke Jenjang yang Serius4",
-        text: "Kini, dengan mengucap syukur, kami memutuskan untuk melangkah ke jenjang yang lebih serius dan menyatukan dua hati dalam ikatan yang suci. Dengan restu kedua keluarga, kami mantap menyatukan langkah menuju pernikahan.",
+        emoji: "💍",
+        title: "Langkah Menuju Ridho Allah",
+        text: "Maret 2026 menjadi awal kesungguhan kami, saat dua keluarga dipertemukan dalam satu tujuan yang sama. Hingga akhirnya pada Agustus 2026, kami memilih untuk melangkah bersama dalam ikatan pernikahan, mengucap janji suci, dan memulai perjalanan baru sebagai satu keluarga.",
       },
     ],
   },

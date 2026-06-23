@@ -28,7 +28,7 @@ export function LoveStory() {
           </h2>
 
           {/* Video — self-hosted .mp4 (autoplay, muted, looping, inline for mobile) */}
-          <div className="mt-5 overflow-hidden rounded-2xl shadow-xl">
+          {/* <div className="mt-5 overflow-hidden rounded-2xl shadow-xl">
             <video
               src={config.story.video}
               autoPlay
@@ -37,7 +37,7 @@ export function LoveStory() {
               playsInline
               className="aspect-video w-full bg-black object-cover"
             />
-          </div>
+          </div> */}
 
           {/* Story timeline + backdrop-blur reveal overlay */}
           <div ref={storyRef} className="relative mt-6">
