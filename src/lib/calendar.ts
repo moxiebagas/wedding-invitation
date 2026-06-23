@@ -73,5 +73,5 @@ export function mapsEmbedUrl(query: string): string {
 
 /** Google Maps directions / open URL. */
 export function mapsDirectionsUrl(query: string): string {
-  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+  return `https://maps.app.goo.gl/5RYoAEEmhqsxNCdX7`;
 }

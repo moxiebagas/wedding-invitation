@@ -24,17 +24,17 @@ export const config = {
   // ── Couple ────────────────────────────────────────────────
   groom: {
     name: "Muhammad Rafi Herman",
-    shortName: "M. Rafi Herman S, Kom.",
+    shortName: "M. Rafi Herman",
     order: "Putra Pertama dari",
-    parents: "Bpk. Herholo & Ibu Nofiati",
+    parents: "Bpk. Herman & Ibu Rohati",
     instagram: "muhammadrafiherman",
     photo: "/images/groom.jpg",
   },
   bride: {
     name: "Indri Anjari",
-    shortName: "Indri Anjari S, Pd., Gr.",
+    shortName: "Indri Anjari",
     order: "Putri Kedua dari",
-    parents: "Bpk. Hendar Suwantar & Ibu Ida Suriyani",
+    parents: "Bpk. Hendar Suhendar & Ibu Ida Sumiyati",
     instagram: "indri.anjarii",
     photo: "/images/bride.jpg",
   },
@@ -46,7 +46,7 @@ export const config = {
 
   // ── Cover ─────────────────────────────────────────────────
   defaultGuest: "Tamu Undangan",
-  coverPhoto: "/images/cover.webp",
+  coverPhoto: "/images/cover.png",
 
   // Full-body portrait shown on the opening section (blends into the backdrop).
   openingPhoto: "/images/bg-opening.png",
@@ -54,7 +54,7 @@ export const config = {
   // ── Opening verse ─────────────────────────────────────────
   verse: {
     arabic:
-      "وَمِنْ اٰيٰتِهٖٓ اَنْ خَلَقَ لَكُمْ مِّنْ اَنْفُسِكُمْ اَزْوَاجًا لِّتَسْكُنُوْٓا اِلَيْهَا وَجَعَلَ بَيْنَكُمْ مَّوَدَّةً وَّرَحْمَةً ۗاِنَّ فِيْ ذٰلِكَ لَاٰيٰتٍ لِّقَوْمٍ يَّتَفَكَّرُوْنَ",
+      "وَمِنْ اٰيٰتِهٖٓ اَنْ خَلَقَ لَكُمْ مِّنْ اَنْفُسِكُمْ اَزْوَاجًا لِّتَسْكُنُوْٓا اِلَيْهَا وَجَعَلَ بَيْنَكُمْ مَّوَدَّةً وَّرَحْمَةًۗ اِنَّ فِيْ ذٰلِكَ لَاٰيٰتٍ لِّقَوْمٍ يَّتَفَكَّرُوْنَ",
     translation:
       "Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya, dan Dia menjadikan di antaramu rasa kasih dan sayang. Sungguh, pada yang demikian itu benar-benar terdapat tanda-tanda (kebesaran Allah) bagi kaum yang berpikir.",
     source: "QS. Ar-Rum: 21",
@@ -68,7 +68,7 @@ export const config = {
       end: "2026-08-30T10:30:00+07:00",
       dateLabel: "Minggu, 30 Agustus 2026",
       timeLabel: "Pukul 09.00 WIB",
-      venue: 'Kelenteng "HOK TEK BIO"',
+      venue: 'Gedung Serba Guna HTB, Ciamis',
       address: "Ciamis, Jawa Barat",
     },
     {
@@ -76,16 +76,16 @@ export const config = {
       start: "2026-08-30T11:00:00+07:00",
       end: "2026-08-30T14:00:00+07:00",
       dateLabel: "Minggu, 30 Agustus 2026",
-      timeLabel: "Pukul 11.00 WIB",
-      venue: 'Kelenteng "HOK TEK BIO"',
+      timeLabel: "Pukul 11.00 WIB s/d 14.00 WIB",
+      venue: 'Gedung Serba Guna HTB, Ciamis',
       address: "Ciamis, Jawa Barat",
     },
   ] satisfies EventDetail[],
 
   // ── Location / Maps ───────────────────────────────────────
   location: {
-    name: 'Kelenteng "HOK TEK BIO" Ciamis',
-    query: 'Kelenteng HOK TEK BIO Ciamis',
+    name: 'Gedung Serba Guna HTB, Ciamis',
+    query: 'Gedung Serba Guna HTB, Ciamis',
   },
 
   // ── Love story ────────────────────────────────────────────
@@ -127,9 +127,11 @@ export const config = {
     { type: "image", src: "/images/gallery-1.jpg", alt: "Indri & Rafi 1" },
     { type: "image", src: "/images/gallery-2.jpg", alt: "Indri & Rafi 2" },
     { type: "image", src: "/images/gallery-3.jpg", alt: "Indri & Rafi 3" },
-    { type: "video", src: "/images/clip-1.mp4", poster: "/images/gallery-4.jpg", alt: "Prewedding clip" },
+    { type: "image", src: "/images/gallery-4.jpg", alt: "Indri & Rafi 4" },
     { type: "image", src: "/images/gallery-5.jpg", alt: "Indri & Rafi 5" },
     { type: "image", src: "/images/gallery-6.jpg", alt: "Indri & Rafi 6" },
+    { type: "image", src: "/images/gallery-7.jpg", alt: "Indri & Rafi 7" },
+    { type: "image", src: "/images/gallery-8.jpg", alt: "Indri & Rafi 8" },
   ] satisfies GalleryItem[],
 
   // Background music played after the cover is opened (optional).

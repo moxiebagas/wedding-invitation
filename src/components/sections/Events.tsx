@@ -8,7 +8,7 @@ import { ParallaxBg } from "@/components/ui/ParallaxBg";
 import { Reveal } from "@/components/ui/Reveal";
 
 // Full-bleed backdrop for this slide (couple reading).
-const EVENT_BG = "/images/bg-event.jpg";
+const EVENT_BG = "/images/bg-event.png";
 
 /* ── Device-calendar (.ics) — same approach as Opening.tsx, no Google login ── */
 
@@ -100,14 +100,14 @@ function EventCard({ event, delay }: { event: EventDetail; delay: number }) {
             <MapPin className="h-4 w-4" />
             Lihat Lokasi
           </a>
-          <button
+          {/* <button
             type="button"
             onClick={() => saveEventToCalendar(event)}
             className="inline-flex w-full items-center justify-center gap-2 rounded-lg border-2 border-ink px-4 py-2.5 font-body text-sm text-ink transition-[transform,background,color] duration-300 hover:-translate-y-0.5 hover:bg-ink hover:text-paper sm:w-auto"
           >
             <CalendarPlus className="h-4 w-4" />
             Save to Calendar
-          </button>
+          </button> */}
         </div>
       </div>
     </Reveal>
