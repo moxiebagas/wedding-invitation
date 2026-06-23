@@ -29,7 +29,7 @@ export function Cover({ guestName, onOpen }: CoverProps) {
         initial={{ opacity: 0, y: -16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.9, ease: "easeOut" }}
-        className="absolute left-0 top-[12%] z-10 max-w-[80%] px-7 text-left sm:top-[14%] sm:px-10"
+        className="absolute left-0 top-[7%] z-10 max-w-[80%] px-7 text-left sm:top-[14%] sm:px-10"
       >
         <p className="font-serif text-xs uppercase tracking-[0.3em] text-ink/70 sm:text-sm">
           The Wedding Of
