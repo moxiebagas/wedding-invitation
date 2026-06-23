@@ -69,7 +69,7 @@ export function Opening() {
       <div className="px-6 pt-9 text-center sm:pt-16">
         <p className="font-serif text-sm text-ink/80 sm:text-base">The Wedding Of</p>
 
-        <h2 className="mt-2 whitespace-nowrap font-serif text-[clamp(1.5rem,6.5vw,3rem)] font-bold leading-[1.15] text-ink">
+        <h2 className="mt-2 font-serif text-[clamp(1.5rem,6.5vw,3rem)] font-bold leading-[1.15] text-ink">
           {config.bride.name}{" "}
           <span className="font-script text-[1.1em] font-normal italic">&amp;</span>
           <br />
