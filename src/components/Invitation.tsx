@@ -157,21 +157,44 @@ function PersonSlide({
  * Orchestrates the two states of the invitation:
  *  1. The cover (scroll locked) until the guest taps "Open Invitation".
  *  2. The full, scrollable invitation with background music.
+ *
+ * On desktop the invitation lives inside a fixed-height scroll panel.
+ * `scrollContainerRef` points to that panel so scroll-lock and scroll-reset
+ * target the panel instead of the document body / window.
  */
-export function Invitation({ guestName }: { guestName: string }) {
+export function Invitation({
+  guestName,
+  scrollContainerRef,
+}: {
+  guestName: string;
+  scrollContainerRef?: React.RefObject<HTMLDivElement | null>;
+}) {
   const [opened, setOpened] = useState(false);
 
-  // Lock body scroll while the cover is showing.
+  // Lock scroll on the appropriate container while the cover is showing.
   useEffect(() => {
+    const panel = scrollContainerRef?.current;
+    if (panel) {
+      panel.style.overflowY = opened ? "auto" : "hidden";
+      return () => {
+        panel.style.overflowY = "auto";
+      };
+    }
     document.body.style.overflow = opened ? "" : "hidden";
     return () => {
       document.body.style.overflow = "";
     };
-  }, [opened]);
+  }, [opened, scrollContainerRef]);
 
   function handleOpen() {
     setOpened(true);
-    requestAnimationFrame(() => window.scrollTo({ top: 0 }));
+    requestAnimationFrame(() => {
+      if (scrollContainerRef?.current) {
+        scrollContainerRef.current.scrollTo({ top: 0 });
+      } else {
+        window.scrollTo({ top: 0 });
+      }
+    });
   }
 
   return (

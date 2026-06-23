@@ -1,5 +1,5 @@
 import { config } from "@/lib/config";
-import { Invitation } from "@/components/Invitation";
+import { ResponsiveInvitationLayout } from "@/components/ResponsiveInvitationLayout";
 
 /**
  * The guest name is driven by the `?to=` query parameter, e.g.
@@ -15,5 +15,5 @@ export default async function Home({
   const raw = Array.isArray(params.to) ? params.to[0] : params.to;
   const guestName = raw?.trim() ? raw.trim() : config.defaultGuest;
 
-  return <Invitation guestName={guestName} />;
+  return <ResponsiveInvitationLayout guestName={guestName} />;
 }

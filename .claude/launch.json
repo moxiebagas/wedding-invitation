@@ -1,0 +1,15 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "wedding-dev",
+      "runtimeExecutable": "/Users/akumaju/.nvm/versions/node/v20.19.5/bin/npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 3000,
+      "autoPort": false,
+      "env": {
+        "PATH": "/Users/akumaju/.nvm/versions/node/v20.19.5/bin:/usr/local/bin:/usr/bin:/bin"
+      }
+    }
+  ]
+}
