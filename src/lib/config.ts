@@ -24,7 +24,7 @@ export const config = {
   // ── Couple ────────────────────────────────────────────────
   groom: {
     name: "Muhammad Rafi Herman",
-    shortName: "M. Rafi Herman",
+    shortName: "M. Rafi Herman S.Kom",
     order: "Putra Pertama dari",
     parents: "Bpk. Herman & Ibu Rohati",
     instagram: "muhammadrafiherman",
@@ -32,7 +32,7 @@ export const config = {
   },
   bride: {
     name: "Indri Anjari",
-    shortName: "Indri Anjari",
+    shortName: "Indri Anjari S.Pd., Gr.",
     order: "Putri Kedua dari",
     parents: "Bpk. Hendar Suhendar & Ibu Ida Sumiyati",
     instagram: "indri.anjarii",
@@ -112,7 +112,7 @@ export const config = {
       {
         emoji: "💫",
         title: "Menemukan Kembali Rasa",
-        text: "Pada 2019, kami menyadari bahwa rasa itu tidak pernah benar-benar hilang, kami kembali memutuskan untuk bersama.",
+        text: "Pada 2019, kami menyadari bahwa rasa itu tidak pernah benar-benar hilang, Kami memutuskan untuk kembali bersama.",
       },
       {
         emoji: "💍",
