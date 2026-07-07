@@ -1,8 +1,34 @@
 "use client";
 
-import { useRef } from "react";
+import { createContext, useContext, useRef, type RefObject } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { cn } from "@/lib/utils";
+
+/**
+ * On desktop the invitation scrolls inside its own panel
+ * (`ResponsiveInvitationLayout`'s right panel) instead of the window, so
+ * `useScroll` needs to track that panel's scroll instead of the window's.
+ * `ScrollContainerProvider` supplies that panel ref; when absent (e.g. on
+ * mobile, where the window itself scrolls) every `ParallaxBg` falls back to
+ * tracking the window, so nothing needs to change at the call sites.
+ */
+const ScrollContainerContext = createContext<RefObject<HTMLDivElement | null> | null>(
+  null,
+);
+
+export function ScrollContainerProvider({
+  containerRef,
+  children,
+}: {
+  containerRef: RefObject<HTMLDivElement | null>;
+  children: React.ReactNode;
+}) {
+  return (
+    <ScrollContainerContext.Provider value={containerRef}>
+      {children}
+    </ScrollContainerContext.Provider>
+  );
+}
 
 interface ParallaxBgProps {
   src: string;
@@ -30,8 +56,10 @@ export function ParallaxBg({
   mirror,
 }: ParallaxBgProps) {
   const ref = useRef<HTMLDivElement>(null);
+  const container = useContext(ScrollContainerContext);
   const { scrollYProgress } = useScroll({
     target: ref,
+    container: container ?? undefined,
     offset: ["start end", "end start"],
   });
   // Crossfade curve: this background fades IN as the section enters (reaching
