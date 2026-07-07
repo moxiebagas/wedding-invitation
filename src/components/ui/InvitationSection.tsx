@@ -43,7 +43,10 @@ export function InvitationSection({
   id,
 }: InvitationSectionProps) {
   return (
-    <section id={id} className={cn("relative w-full overflow-hidden", className)}>
+    // overflow-clip, not -hidden: hidden would disable the sticky pinned
+    // backdrop inside ParallaxBg (it turns the section into a scroll
+    // container); clip crops the same without doing that.
+    <section id={id} className={cn("relative w-full overflow-clip", className)}>
       <ParallaxBg
         src={backgroundImage}
         overlayClassName={overlayClassName}

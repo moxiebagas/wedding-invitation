@@ -1,13 +1,7 @@
 "use client";
 
-import { createContext, useContext, useEffect, useRef, type RefObject } from "react";
-import {
-  motion,
-  useMotionValue,
-  useMotionValueEvent,
-  useScroll,
-  useTransform,
-} from "framer-motion";
+import { createContext, useContext, useRef, type RefObject } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 /**
@@ -50,11 +44,19 @@ interface ParallaxBgProps {
 
 /**
  * A full-bleed section background that fades in with the scroll position of
- * its own section while staying visually pinned to the viewport: the image is
- * viewport-sized and counter-translated against the section's scroll movement,
- * so only the foreground content moves. (`position: fixed` can't be used here —
- * the desktop layout scrolls inside a transformed panel, which re-anchors fixed
- * descendants.) Driven by framer-motion's `useScroll` (rAF + passive).
+ * its own section while staying visually pinned to the viewport, so only the
+ * foreground content moves. Pinning is pure CSS `position: sticky` — an
+ * oversized frame (one viewport above/below the section) lets a viewport-tall
+ * sticky child stay put for the section's entire transit, clipped back to the
+ * section's own bounds. Sticky is handled on the compositor thread, so the
+ * backdrop can never lag the scroll (a JS counter-translate runs a frame
+ * behind threaded scrolling and visibly jitters; `position: fixed` breaks
+ * inside the desktop layout's transformed scroll panel). Only the opacity
+ * crossfade is scroll-driven JS, where a one-frame lag is imperceptible.
+ *
+ * Requires every ancestor between here and the scroll container to avoid
+ * `overflow: hidden` (it silently disables sticky) — sections clip themselves
+ * with `overflow-clip` instead, which does not create a scroll container.
  */
 export function ParallaxBg({
   src,
@@ -75,54 +77,35 @@ export function ParallaxBg({
   // next section's fade-in for a smooth, non-abrupt hand-off.
   const opacity = useTransform(scrollYProgress, [0, 0.4, 0.6, 1], [0, 1, 1, 0.2]);
 
-  // Pin the backdrop: with the ["start end", "end start"] offsets, progress p
-  // maps to a section top of `viewport - p * (viewport + section)` relative to
-  // the viewport, so translating the image by the inverse keeps it static on
-  // screen while the section (and its content) scrolls past.
-  const dims = useRef({ viewport: 0, section: 0 });
-  const y = useMotionValue(0);
-  const pin = (p: number) =>
-    y.set(p * (dims.current.viewport + dims.current.section) - dims.current.viewport);
-  useMotionValueEvent(scrollYProgress, "change", pin);
-  useEffect(() => {
-    const measure = () => {
-      dims.current = {
-        viewport: container?.current?.clientHeight ?? window.innerHeight,
-        section: ref.current?.offsetHeight ?? 0,
-      };
-      pin(scrollYProgress.get());
-    };
-    measure();
-    const observer = new ResizeObserver(measure);
-    if (ref.current) observer.observe(ref.current);
-    window.addEventListener("resize", measure);
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("resize", measure);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [container]);
-
   return (
     <div
       ref={ref}
       aria-hidden
-      className={cn("pointer-events-none absolute inset-0 overflow-hidden", className)}
+      className={cn("pointer-events-none absolute inset-0", className)}
     >
-      <motion.img
-        src={src}
-        alt=""
-        loading="eager"
-        decoding="async"
-        style={{ opacity, y }}
-        className={cn(
-          // h-screen (not the section height): the image is a viewport-sized
-          // "window" that the pin translation holds in place on screen.
-          "absolute left-0 top-0 h-screen w-full object-cover object-center",
-          mirror && "-scale-x-100",
-          imgClassName,
-        )}
-      />
+      {/* Oversized sticky frame: extends 100lvh past both section edges so the
+          sticky child pins from the moment the section enters the viewport
+          until it fully leaves; clip-path trims it back to the section box
+          (overflow can't be used — it would disable sticky). */}
+      <div
+        className="absolute inset-x-0 -bottom-[100lvh] -top-[100lvh]"
+        style={{ clipPath: "inset(100lvh 0)" }}
+      >
+        <div className="sticky top-0 h-[100lvh]">
+          <motion.img
+            src={src}
+            alt=""
+            loading="eager"
+            decoding="async"
+            style={{ opacity }}
+            className={cn(
+              "h-full w-full object-cover object-center",
+              mirror && "-scale-x-100",
+              imgClassName,
+            )}
+          />
+        </div>
+      </div>
       {overlayClassName && <div className={cn("absolute inset-0", overlayClassName)} />}
     </div>
   );

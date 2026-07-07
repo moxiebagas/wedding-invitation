@@ -124,7 +124,7 @@ export function Events() {
   return (
     <section
       id="acara"
-      className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-ink py-16"
+      className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-clip bg-ink py-16"
     >
       {/* Full-cover backdrop (scroll fade + parallax) + 60% legibility overlay */}
       <ParallaxBg src={EVENT_BG} overlayClassName="bg-black/60" />

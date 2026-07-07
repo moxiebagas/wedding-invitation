@@ -337,7 +337,7 @@ export function WeddingGift() {
   // const eWallets = config.gift.eWallets;
 
   return (
-    <section id="hadiah" className="relative w-full overflow-hidden bg-ink px-6 py-20">
+    <section id="hadiah" className="relative w-full overflow-clip bg-ink px-6 py-20">
       {/* Full-cover backdrop (scroll fade + parallax) + dark overlay */}
       <ParallaxBg src={GIFT_BG} overlayClassName="bg-black/70" />
 

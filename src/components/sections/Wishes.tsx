@@ -123,7 +123,7 @@ export function Wishes({ defaultName }: { defaultName: string }) {
   }
 
   return (
-    <section id="ucapan" className="relative w-full overflow-hidden bg-ink px-6 py-20">
+    <section id="ucapan" className="relative w-full overflow-clip bg-ink px-6 py-20">
       {/* Full-cover backdrop (scroll fade + parallax) + dark overlay */}
       <ParallaxBg src={WISHES_BG} overlayClassName="bg-black/65" />
 

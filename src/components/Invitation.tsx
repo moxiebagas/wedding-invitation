@@ -74,7 +74,7 @@ function PersonSlide({
   };
 
   return (
-    <section className="relative flex min-h-[100svh] w-full items-center justify-center overflow-hidden bg-ink">
+    <section className="relative flex min-h-[100svh] w-full items-center justify-center overflow-clip bg-ink">
       {/* 1 — Full-bleed backdrop (scroll fade + parallax) + overlays */}
       <ParallaxBg src={backdrop} overlayClassName={overlayClass} />
       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />
@@ -240,7 +240,7 @@ export function Invitation({
           />
           <Events />
           {/* Love Story + Gallery share one continuous backdrop */}
-          <div className="relative isolate overflow-hidden bg-ink">
+          <div className="relative isolate overflow-clip bg-ink">
             <ParallaxBg
               src="/images/bg-story.png"
               overlayClassName="bg-black/70"
