@@ -48,7 +48,7 @@ export const config = {
   // ── Couple ────────────────────────────────────────────────
   groom: {
     name: "Muhammad Rafi Herman",
-    shortName: "M. Rafi Herman S.Kom",
+    shortName: "Muhammad Rafi Herman, S.Kom",
     order: "Putra Pertama dari",
     parents: "Bpk. Herman & Ibu Rohati",
     instagram: "muhammadrafiherman",
@@ -56,7 +56,7 @@ export const config = {
   },
   bride: {
     name: "Indri Anjari",
-    shortName: "Indri Anjari S.Pd.,Gr.",
+    shortName: "Indri Anjari, S.Pd.,Gr.",
     order: "Putri Kedua dari",
     parents: "Bpk. Hendar Suhendar & Ibu Ida Sumiati",
     instagram: "indri.anjarii",
