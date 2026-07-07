@@ -1,7 +1,13 @@
 "use client";
 
-import { createContext, useContext, useRef, type RefObject } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { createContext, useContext, useEffect, useRef, type RefObject } from "react";
+import {
+  motion,
+  useMotionValue,
+  useMotionValueEvent,
+  useScroll,
+  useTransform,
+} from "framer-motion";
 import { cn } from "@/lib/utils";
 
 /**
@@ -43,10 +49,12 @@ interface ParallaxBgProps {
 }
 
 /**
- * A full-bleed section background that fades in and gently parallaxes with the
- * scroll position of its own section. As the next section scrolls into view its
- * backdrop "follows" the scroll instead of snapping in. Driven by
- * framer-motion's `useScroll` (rAF + passive) — no manual scroll listeners.
+ * A full-bleed section background that fades in with the scroll position of
+ * its own section while staying visually pinned to the viewport: the image is
+ * viewport-sized and counter-translated against the section's scroll movement,
+ * so only the foreground content moves. (`position: fixed` can't be used here —
+ * the desktop layout scrolls inside a transformed panel, which re-anchors fixed
+ * descendants.) Driven by framer-motion's `useScroll` (rAF + passive).
  */
 export function ParallaxBg({
   src,
@@ -66,9 +74,34 @@ export function ParallaxBg({
   // full before it centers) and fades OUT as it leaves — so it overlaps the
   // next section's fade-in for a smooth, non-abrupt hand-off.
   const opacity = useTransform(scrollYProgress, [0, 0.4, 0.6, 1], [0, 1, 1, 0.2]);
-  // Gentle vertical parallax. The image is 120% tall and only drifts upward,
-  // so it always covers the section (no edge gaps / layout shift).
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "-14%"]);
+
+  // Pin the backdrop: with the ["start end", "end start"] offsets, progress p
+  // maps to a section top of `viewport - p * (viewport + section)` relative to
+  // the viewport, so translating the image by the inverse keeps it static on
+  // screen while the section (and its content) scrolls past.
+  const dims = useRef({ viewport: 0, section: 0 });
+  const y = useMotionValue(0);
+  const pin = (p: number) =>
+    y.set(p * (dims.current.viewport + dims.current.section) - dims.current.viewport);
+  useMotionValueEvent(scrollYProgress, "change", pin);
+  useEffect(() => {
+    const measure = () => {
+      dims.current = {
+        viewport: container?.current?.clientHeight ?? window.innerHeight,
+        section: ref.current?.offsetHeight ?? 0,
+      };
+      pin(scrollYProgress.get());
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    if (ref.current) observer.observe(ref.current);
+    window.addEventListener("resize", measure);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [container]);
 
   return (
     <div
@@ -83,7 +116,9 @@ export function ParallaxBg({
         decoding="async"
         style={{ opacity, y }}
         className={cn(
-          "absolute left-0 top-0 h-[120%] w-full object-cover object-center",
+          // h-screen (not the section height): the image is a viewport-sized
+          // "window" that the pin translation holds in place on screen.
+          "absolute left-0 top-0 h-screen w-full object-cover object-center",
           mirror && "-scale-x-100",
           imgClassName,
         )}
