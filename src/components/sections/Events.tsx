@@ -63,30 +63,34 @@ function saveEventToCalendar(event: EventDetail): void {
 function EventCard({ event, delay }: { event: EventDetail; delay: number }) {
   return (
     <Reveal direction="up" delay={delay} className="w-full max-w-sm">
-      <div className="rounded-3xl bg-paper px-6 py-7 text-center shadow-[0_26px_60px_-28px_rgba(0,0,0,0.75)]">
+      <div className="rounded-3xl border border-white/20 bg-white/10 px-6 py-7 text-center shadow-[0_26px_60px_-28px_rgba(0,0,0,0.75)] backdrop-blur-md">
         {/* Icon badge */}
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-ink/15 bg-mist text-ink">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-white/40 text-white">
           <CalendarDays className="h-5 w-5" />
         </div>
 
-        <h3 className="mt-3 font-script text-4xl leading-none text-graphite">
+        <h3 className="mt-3 font-script text-4xl leading-none text-white">
           {event.title}
         </h3>
 
-        <p className="mt-3 font-body text-base text-ink">{event.dateLabel}</p>
+        <p className="mt-3 font-body text-base text-white/90">{event.dateLabel}</p>
 
         {/* Time — its own centered row */}
-        <p className="mt-1 flex items-center justify-center gap-1.5 font-body text-sm text-ash">
-          <Clock className="h-4 w-4 text-ink" />
+        <p className="mt-1 flex items-center justify-center gap-1.5 font-body text-sm text-white/70">
+          <Clock className="h-4 w-4 text-white" />
           {event.timeLabel}
         </p>
 
         {/* Location — centered icon image, then the venue name on a new line */}
         <div className="mt-3 flex flex-col items-center gap-1">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/icon-location.png" alt="Lokasi" className="h-6 w-6 object-contain" />
-          <p className="font-serif text-base text-ink">{event.venue}</p>
-          <p className="font-body text-sm text-ash">{event.address}</p>
+          <img
+            src="/images/icon-location.png"
+            alt="Lokasi"
+            className="h-6 w-6 object-contain brightness-0 invert"
+          />
+          <p className="font-serif text-base text-white">{event.venue}</p>
+          <p className="font-body text-sm text-white/70">{event.address}</p>
         </div>
 
         {/* Actions: Maps (location) + Save to device calendar (.ics) */}
@@ -95,7 +99,7 @@ function EventCard({ event, delay }: { event: EventDetail; delay: number }) {
             href={mapsDirectionsUrl(`${event.venue} ${event.address}`)}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-ink px-4 py-2.5 font-body text-sm font-medium text-paper transition-[transform,background,color] duration-300 hover:-translate-y-0.5 hover:bg-graphite sm:w-auto"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-paper px-4 py-2.5 font-body text-sm font-medium text-ink transition-[transform,background,color] duration-300 hover:-translate-y-0.5 hover:bg-mist sm:w-auto"
           >
             <MapPin className="h-4 w-4" />
             Lihat Lokasi

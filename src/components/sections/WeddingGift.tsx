@@ -245,21 +245,21 @@ function AddressCard({
   const { recipient, address } = config.gift.address;
   return (
     <Reveal direction="up" delay={delay} className="mx-auto w-full max-w-xl">
-      <div className="paper-card px-6 py-7 text-center transition-shadow duration-300 hover:shadow-[0_26px_60px_-24px_rgba(20,20,20,0.45)]">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-ink/15 bg-mist text-ink">
+      <div className="rounded-2xl border border-white/20 bg-white/10 px-6 py-7 text-center shadow-[0_20px_50px_-20px_rgba(0,0,0,0.7)] backdrop-blur-md transition-shadow duration-300 hover:shadow-[0_30px_60px_-20px_rgba(0,0,0,0.8)]">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-white/40 text-white">
           <MapPin className="h-5 w-5" />
         </div>
 
-        <h3 className="mt-3 font-serif text-lg font-semibold text-graphite">
+        <h3 className="mt-3 font-serif text-lg font-semibold text-paper">
           {recipient}
         </h3>
-        <p className="mt-2 font-body text-base leading-relaxed text-ash">{address}</p>
+        <p className="mt-2 font-body text-base leading-relaxed text-white/75">{address}</p>
 
         <button
           type="button"
           onClick={onCopy}
           aria-label={`Salin alamat pengiriman: ${address}`}
-          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg border-2 border-ink px-4 py-2.5 font-body text-sm text-ink transition-[transform,background,color] duration-300 hover:-translate-y-0.5 hover:bg-ink hover:text-paper focus-visible:-translate-y-0.5 focus-visible:bg-ink focus-visible:text-paper active:translate-y-0 sm:w-auto sm:mx-auto"
+          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg border-2 border-white/70 px-4 py-2.5 font-body text-sm text-white transition-[transform,background,color] duration-300 hover:-translate-y-0.5 hover:bg-white hover:text-ink focus-visible:-translate-y-0.5 focus-visible:bg-white focus-visible:text-ink active:translate-y-0 sm:w-auto sm:mx-auto"
         >
           {copied ? (
             <>

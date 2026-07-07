@@ -9,6 +9,7 @@ import {
   MessageCircle,
   Send,
   Users,
+  XCircle,
 } from "lucide-react";
 import {
   attendanceLabel,
@@ -256,33 +257,38 @@ export function Wishes({ defaultName }: { defaultName: string }) {
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: Math.min(i * 0.04, 0.3) }}
-                  className="rounded-2xl bg-white p-4 shadow-[0_14px_36px_-20px_rgba(0,0,0,0.7)]"
+                  className="rounded-2xl border border-white/20 bg-white/10 p-4 shadow-[0_14px_36px_-20px_rgba(0,0,0,0.7)] backdrop-blur-md"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-1.5">
-                      <span className="border-b-2 border-ink/70 pb-0.5 font-serif text-lg font-semibold text-ink">
+                      <span className="border-b-2 border-white/60 pb-0.5 font-serif text-lg font-semibold text-white">
                         {r.guest_name}
                       </span>
                       {r.attendance_status === "attending" ? (
-                        <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                        <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" />
+                      ) : r.attendance_status === "not_attending" ? (
+                        <XCircle
+                          className="h-4 w-4 shrink-0 text-rose-400"
+                          aria-label={attendanceLabel[r.attendance_status]}
+                        />
                       ) : (
                         <span
-                          className="h-2.5 w-2.5 rounded-full bg-ash/50"
+                          className="h-2.5 w-2.5 shrink-0 rounded-full bg-white/40"
                           title={attendanceLabel[r.attendance_status]}
                         />
                       )}
                     </div>
-                    <span className="shrink-0 font-body text-xs text-ash">
+                    <span className="shrink-0 font-body text-xs text-white/60">
                       {timeAgo(r.created_at)}
                     </span>
                   </div>
 
-                  <p className="mt-1 font-body text-xs uppercase tracking-wide text-ash">
+                  <p className="mt-1 font-body text-xs uppercase tracking-wide text-white/60">
                     {attendanceLabel[r.attendance_status]}
                   </p>
 
                   {r.message && (
-                    <p className="mt-2 font-body text-sm leading-relaxed text-graphite">
+                    <p className="mt-2 font-body text-sm leading-relaxed text-white/85">
                       {r.message}
                     </p>
                   )}
