@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, ChevronDown, ChevronUp, Copy, Gift, Landmark, MapPin, Wallet } from "lucide-react";
+import { Check, ChevronDown, ChevronUp, Copy, Gift, MapPin, Nfc, Wallet } from "lucide-react";
 import { config, type BankAccount, type EWalletAccount } from "@/lib/config";
 import { cn } from "@/lib/utils";
 import { ParallaxBg } from "@/components/ui/ParallaxBg";
@@ -29,17 +29,22 @@ function CopyButton({
   copied,
   onClick,
   label,
+  className,
 }: {
   copied: boolean;
   onClick: () => void;
   label: string;
+  className?: string;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
       aria-label={label}
-      className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-ink px-4 py-2.5 font-body text-sm font-medium text-paper transition-[transform,background,color] duration-300 hover:-translate-y-0.5 hover:bg-graphite focus-visible:-translate-y-0.5 focus-visible:bg-graphite active:translate-y-0"
+      className={cn(
+        "mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-ink px-4 py-2.5 font-body text-sm font-medium text-paper transition-[transform,background,color] duration-300 hover:-translate-y-0.5 hover:bg-graphite focus-visible:-translate-y-0.5 focus-visible:bg-graphite active:translate-y-0",
+        className,
+      )}
     >
       {copied ? (
         <>
@@ -56,6 +61,46 @@ function CopyButton({
   );
 }
 
+/** Stylised EMV chip drawn inline so it inherits the monochrome theme. */
+function CardChip() {
+  const gradientId = useId();
+  return (
+    <svg
+      viewBox="0 0 44 32"
+      aria-hidden="true"
+      className="h-8 w-11 drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]"
+    >
+      <defs>
+        <linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#f5f2ea" />
+          <stop offset="45%" stopColor="#cfc8b8" />
+          <stop offset="100%" stopColor="#e8e2d4" />
+        </linearGradient>
+      </defs>
+      <rect x="1" y="1" width="42" height="30" rx="6" fill={`url(#${gradientId})`} />
+      <rect x="1" y="1" width="42" height="30" rx="6" fill="none" stroke="rgba(20,20,20,0.35)" />
+      <path
+        d="M1 11h13a4 4 0 0 1 4 4v2a4 4 0 0 1-4 4H1M43 11H30a4 4 0 0 0-4 4v2a4 4 0 0 0 4 4h13M22 1v10M22 21v10"
+        fill="none"
+        stroke="rgba(20,20,20,0.35)"
+        strokeWidth="1.2"
+      />
+    </svg>
+  );
+}
+
+/** Splits "Bank Central Asia (BCA)" into short code + full name. */
+function bankNameParts(bank: string): { short: string; full: string } {
+  const match = bank.match(/^(.*?)\s*\(([^)]+)\)\s*$/);
+  if (match) return { short: match[2], full: match[1] };
+  return { short: bank, full: "" };
+}
+
+/** Groups digits in fours for a card-number look: "6871 4236 92". */
+function formatCardNumber(value: string): string {
+  return value.trim().replace(/(\d{4})(?=\d)/g, "$1 ");
+}
+
 function BankCard({
   account,
   copied,
@@ -67,30 +112,68 @@ function BankCard({
   onCopy: () => void;
   delay: number;
 }) {
+  const { short, full } = bankNameParts(account.bank);
+
   return (
     <Reveal direction="up" delay={delay} className="w-full">
-      <div className="paper-card h-full px-6 py-7 text-center transition-shadow duration-300 hover:shadow-[0_26px_60px_-24px_rgba(20,20,20,0.45)]">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-ink/15 bg-mist text-ink">
-          {account.logo ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={account.logo} alt="" className="h-6 w-6 object-contain" />
-          ) : (
-            <Landmark className="h-5 w-5" />
-          )}
-        </div>
+      <div className="flex h-full flex-col">
+        {/* ATM-style card face */}
+        <div className="group relative aspect-[1.586/1] w-full overflow-hidden rounded-2xl border border-white/15 bg-gradient-to-br from-[#3d3d3d] via-graphite to-ink text-left shadow-[0_20px_50px_-20px_rgba(0,0,0,0.7)] transition-[transform,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-[0_30px_60px_-20px_rgba(0,0,0,0.8)]">
+          {/* Soft diagonal sheen */}
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(130%_90%_at_12%_-10%,rgba(255,255,255,0.16),transparent_55%)]" />
+          {/* Fine texture lines */}
+          <div className="pointer-events-none absolute inset-0 opacity-[0.05] [background-image:repeating-linear-gradient(115deg,transparent,transparent_5px,white_5px,white_6px)]" />
+          {/* Script monogram watermark (matches the Photo fallback) */}
+          <span className="pointer-events-none absolute -bottom-4 -right-1 select-none font-script text-[6.5rem] leading-none text-white/[0.07]">
+            I&nbsp;&amp;&nbsp;R
+          </span>
 
-        <h3 className="mt-3 font-serif text-lg font-semibold text-graphite">
-          {account.bank}
-        </h3>
-        <p className="mt-1 font-body text-sm text-ash">{account.accountHolder}</p>
-        <p className="mt-2 select-all font-body text-xl tracking-[0.15em] text-ink">
-          {account.accountNumber}
-        </p>
+          <div className="relative flex h-full flex-col justify-between p-5 sm:p-6">
+            {/* Top row: chip + contactless / bank identity */}
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center gap-2.5">
+                <CardChip />
+                <Nfc className="h-5 w-5 text-white/60" aria-hidden="true" />
+              </div>
+              <div className="text-right">
+                <p className="font-serif text-xl font-semibold tracking-wide text-paper">
+                  {short}
+                </p>
+                {full && (
+                  <p className="mt-0.5 font-body text-[11px] uppercase tracking-[0.18em] text-white/55">
+                    {full}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Account number */}
+            <p className="select-all font-body text-[1.35rem] tracking-[0.22em] text-paper tabular-nums [text-shadow:0_1px_3px_rgba(0,0,0,0.5)] sm:text-2xl">
+              {formatCardNumber(account.accountNumber)}
+            </p>
+
+            {/* Bottom row: holder / card type */}
+            <div className="flex items-end justify-between gap-3">
+              <div>
+                <p className="font-body text-[10px] uppercase tracking-[0.22em] text-white/50">
+                  Pemilik Rekening
+                </p>
+                <p className="mt-0.5 font-body text-sm font-medium uppercase tracking-[0.14em] text-paper">
+                  {account.accountHolder}
+                </p>
+              </div>
+              <p className="font-serif text-xs italic tracking-[0.2em] text-white/60">
+                DEBIT
+              </p>
+            </div>
+          </div>
+        </div>
 
         <CopyButton
           copied={copied}
           onClick={onCopy}
           label={`Salin nomor rekening ${account.bank} ${account.accountNumber}`}
+          className="bg-paper text-ink hover:bg-mist hover:text-ink focus-visible:bg-mist focus-visible:text-ink"
         />
       </div>
     </Reveal>
