@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect } from "react";
 import { Invitation } from "@/components/Invitation";
 import { DesktopSlideshow } from "@/components/DesktopSlideshow";
+import { ScrollContainerProvider } from "@/components/ui/ParallaxBg";
 
 /**
  * Renders mobile-only layout below lg, and a desktop split-panel layout at lg+.
@@ -45,7 +46,9 @@ export function ResponsiveInvitationLayout({ guestName }: { guestName: string })
         className="no-scrollbar relative h-screen w-[480px] shrink-0 overflow-x-hidden overflow-y-auto bg-paper"
         style={{ transform: "translateZ(0)" }}
       >
-        <Invitation guestName={guestName} scrollContainerRef={rightPanelRef} />
+        <ScrollContainerProvider containerRef={rightPanelRef}>
+          <Invitation guestName={guestName} scrollContainerRef={rightPanelRef} />
+        </ScrollContainerProvider>
       </div>
     </div>
   );

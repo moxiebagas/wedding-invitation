@@ -10,6 +10,7 @@ import { Opening } from "@/components/sections/Opening";
 import { Events } from "@/components/sections/Events";
 import { LoveStory } from "@/components/sections/LoveStory";
 import { Gallery } from "@/components/sections/Gallery";
+import { WeddingGift } from "@/components/sections/WeddingGift";
 import { Wishes } from "@/components/sections/Wishes";
 import { Footer } from "@/components/sections/Footer";
 import { MusicToggle } from "@/components/MusicToggle";
@@ -248,6 +249,7 @@ export function Invitation({
             <LoveStory />
             <Gallery />
           </div>
+          <WeddingGift />
           <Wishes defaultName={guestName} />
           <Footer />
         </motion.div>
