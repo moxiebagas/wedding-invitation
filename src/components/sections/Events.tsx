@@ -131,7 +131,7 @@ export function Events() {
 
       <div className="relative z-10 w-full px-6">
         {/* Title */}
-        <Reveal className="text-center">
+        <Reveal blur className="text-center">
           <h2 className="font-script text-5xl leading-tight text-white sm:text-6xl">
             Wedding Event
           </h2>

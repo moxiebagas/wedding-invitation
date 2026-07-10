@@ -81,17 +81,24 @@ function PersonSlide({
 
       {/* Composition frame — mirrors the 390×844 mockup, centered in the slide */}
       <div className="relative aspect-[390/844] max-h-[100svh] w-full max-w-md">
-        {/* 2 — Sharp portrait, hugging one edge with a subtle reveal */}
-        <motion.img
-          src={portrait}
-          alt={person.name}
-          initial={{ opacity: 0, scale: 1.06 }}
-          whileInView={{ opacity: 1, scale: 1 }}
+        {/* 2 — Sharp portrait, hugging one edge. Unveils top→down like a lifting
+             veil (clip-path wipe) with a soft focus-pull, then keeps a slow
+             living Ken-Burns drift so the portrait never feels static. */}
+        <motion.div
+          initial={{ opacity: 0, clipPath: "inset(0 0 100% 0)", filter: "blur(12px)" }}
+          whileInView={{ opacity: 1, clipPath: "inset(0 0 0% 0)", filter: "blur(0px)" }}
           viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
-          className="absolute object-cover object-top"
+          transition={{ duration: 1.3, ease: [0.22, 1, 0.36, 1] }}
+          className="absolute overflow-hidden"
           style={portraitStyle}
-        />
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={portrait}
+            alt={person.name}
+            className="h-full w-full animate-ken-burns object-cover object-top"
+          />
+        </motion.div>
 
         {/* 3a — Engraved vertical label (opposite the portrait edge) */}
         <div
@@ -204,8 +211,8 @@ export function Invitation({
         {!opened && (
           <motion.div
             key="cover"
-            exit={{ opacity: 0, scale: 1.05 }}
-            transition={{ duration: 0.7, ease: "easeInOut" }}
+            exit={{ opacity: 0, scale: 1.12, filter: "blur(12px)" }}
+            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
             className="fixed inset-0 z-40 mx-auto max-w-3xl"
           >
             <Cover guestName={guestName} onOpen={handleOpen} />
@@ -213,11 +220,24 @@ export function Invitation({
         )}
       </AnimatePresence>
 
+      {/* Paper "veil" that blooms over the seam as the cover lifts, then
+          dissolves to unveil the invitation — like lifting a bridal veil. */}
       {opened && (
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
+          key="veil"
+          aria-hidden
+          initial={{ opacity: 1 }}
+          animate={{ opacity: 0 }}
+          transition={{ duration: 1.1, ease: "easeInOut" }}
+          className="pointer-events-none fixed inset-0 z-30 mx-auto max-w-3xl bg-paper"
+        />
+      )}
+
+      {opened && (
+        <motion.div
+          initial={{ opacity: 0, scale: 1.03, filter: "blur(6px)" }}
+          animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1], delay: 0.25 }}
         >
           <Opening />
           <PersonSlide
