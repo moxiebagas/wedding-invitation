@@ -50,13 +50,13 @@ export function Gallery() {
 
   return (
     <section className="relative w-full px-6 pb-24 pt-6">
-      <Reveal className="text-center">
+      <Reveal blur className="text-center">
         <h2 className="font-script text-4xl leading-tight text-white sm:text-5xl">
           Wedding Gallery
         </h2>
       </Reveal>
 
-      <Reveal delay={0.1} className="mx-auto mt-8 max-w-3xl">
+      <Reveal blur delay={0.1} className="mx-auto mt-8 max-w-3xl">
         <div className="overflow-hidden" ref={emblaRef}>
           <div className="flex">
             {galleryImages.map((src, i) => (

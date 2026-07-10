@@ -2,6 +2,7 @@
 
 import { motion, type Variants } from "framer-motion";
 import type { ReactNode } from "react";
+import { EASE_LUXE } from "@/lib/utils";
 
 type Direction = "up" | "down" | "left" | "right" | "none";
 
@@ -18,17 +19,26 @@ interface RevealProps {
   direction?: Direction;
   delay?: number;
   className?: string;
+  /** Add a soft focus-pull (blur → sharp) for a more filmic, wedding-y reveal. */
+  blur?: boolean;
 }
 
 /** Fade + slide a block into view the first time it scrolls onto screen. */
-export function Reveal({ children, direction = "up", delay = 0, className }: RevealProps) {
+export function Reveal({
+  children,
+  direction = "up",
+  delay = 0,
+  className,
+  blur = false,
+}: RevealProps) {
   const variants: Variants = {
-    hidden: { opacity: 0, ...offset[direction] },
+    hidden: { opacity: 0, ...offset[direction], ...(blur && { filter: "blur(10px)" }) },
     visible: {
       opacity: 1,
       x: 0,
       y: 0,
-      transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1], delay },
+      ...(blur && { filter: "blur(0px)" }),
+      transition: { duration: 0.9, ease: EASE_LUXE, delay },
     },
   };
 

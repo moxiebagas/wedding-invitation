@@ -6,6 +6,12 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+/**
+ * Shared "luxe" easing — a slow, refined ease-out curve used across every
+ * reveal/transition so the whole invitation feels of one motion language.
+ */
+export const EASE_LUXE = [0.22, 1, 0.36, 1] as const;
+
 /** Format an ISO timestamp as a friendly Indonesian date-time. */
 export function formatWaktu(iso: string): string {
   return new Intl.DateTimeFormat("id-ID", {

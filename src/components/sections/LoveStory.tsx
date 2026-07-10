@@ -21,7 +21,7 @@ export function LoveStory() {
 
   return (
     <section className="relative w-full px-5 pb-10 pt-20 sm:px-6">
-      <Reveal className="mx-auto w-full max-w-xl">
+      <Reveal blur className="mx-auto w-full max-w-xl">
         <div className="rounded-[28px] border border-white/40 p-5 sm:p-7">
           <h2 className="text-center font-script text-4xl text-white sm:text-5xl">
             Love Story
