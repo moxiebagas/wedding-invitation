@@ -387,7 +387,7 @@ export function WeddingGift() {
               className="overflow-hidden"
             >
               {/* Bank accounts + optional e-wallets */}
-              <div className="mx-auto mt-10 grid max-w-3xl gap-6 sm:grid-cols-2">
+              <div className="mx-auto mt-10 flex max-w-md flex-col gap-6">
                 {banks.map((account, i) => (
                   <BankCard
                     key={`bank-${account.bank}`}

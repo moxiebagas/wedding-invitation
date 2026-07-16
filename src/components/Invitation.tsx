@@ -86,8 +86,7 @@ function PersonSlide({
              living Ken-Burns drift so the portrait never feels static. */}
         <motion.div
           initial={{ opacity: 0, clipPath: "inset(0 0 100% 0)", filter: "blur(12px)" }}
-          whileInView={{ opacity: 1, clipPath: "inset(0 0 0% 0)", filter: "blur(0px)" }}
-          viewport={{ once: true, amount: 0.3 }}
+          animate={{ opacity: 1, clipPath: "inset(0 0 0% 0)", filter: "blur(0px)" }}
           transition={{ duration: 1.3, ease: [0.22, 1, 0.36, 1] }}
           className="absolute overflow-hidden"
           style={portraitStyle}
