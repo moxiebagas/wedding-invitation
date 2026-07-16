@@ -20,10 +20,33 @@ Supabase credentials live in `.env.local` (copy from `.env.local.example`):
 gracefully without them — `isSupabaseConfigured` gates the RSVP section, so the
 rest of the invitation renders fine with no env vars set.
 
-The RSVP feature needs the `wishes` table. Run `supabase/schema.sql` in the
-Supabase dashboard's SQL Editor. RLS allows public SELECT + INSERT only (never
-update/delete); the same length/enum constraints are enforced both in the table
-`check` and the INSERT policy `with check`.
+The RSVP feature needs the `rsvps` table (`guest_name`, `attendance_status` ∈
+`attending|not_attending|maybe`, optional `message`, `created_at`). Run
+`supabase/schema.sql` in the Supabase dashboard's SQL Editor. RLS allows public
+SELECT + INSERT only (never update/delete); the same length/enum constraints are
+enforced both in the table `check` and the INSERT policy `with check`.
+
+**Admin blast (`/admin/login` + `/admin/blast`)** needs two more server-only
+vars (never `NEXT_PUBLIC_`, so they never reach the browser bundle):
+`SUPABASE_SERVICE_ROLE_KEY` (Supabase dashboard → Settings → API →
+service_role) and `ADMIN_SESSION_SECRET` (any random string; signs the login
+session cookie — see below). The same `schema.sql` also creates `guests`
+(`name`, `phone`, `sent`, `created_at`) and `admin_users` (`username`,
+`password_hash`), both with RLS enabled and **no policies at all** — unlike
+`rsvps`, guest phone numbers and login credentials are private, and the anon
+key is public, so the only way in is `SUPABASE_SERVICE_ROLE_KEY` (bypasses
+RLS), used server-side only by `src/app/api/admin/**`. The client pages never
+talk to Supabase directly.
+
+The admin login itself (username/password) is a row in `admin_users`, not an
+env var — set or change it with `node scripts/set-admin-user.mjs <username>
+<password>` (hashes with Node's built-in `scrypt`, see `src/lib/password.ts`).
+`POST /api/admin/login` verifies against that table and, on success, sets an
+httpOnly `admin_session` cookie: `username.expiresAt.hmacSignature`, signed
+with `ADMIN_SESSION_SECRET` (`src/lib/adminSession.ts`) — stateless, no
+session table, 12h TTL. `src/app/api/admin/guests/**` requires that cookie
+(`src/lib/adminAuth.ts`); the browser sends it automatically since
+`src/lib/guestsApi.ts` fetches are same-origin.
 
 ## Architecture
 
