@@ -223,11 +223,7 @@ export default function BlastAdminPage() {
             <h1 className="mt-1 font-script text-4xl leading-tight text-graphite sm:text-5xl">Blast Undangan</h1>
             <span className="mt-3 block h-px w-16 bg-ink/20" />
             <p className="mt-4 max-w-2xl font-body text-lg text-ash">
-              Kelola daftar tamu, lalu buka setiap tautan WhatsApp untuk mengirim undangan{" "}
-              <span className="font-medium text-ink">
-                {config.bride.name} &amp; {config.groom.name}
-              </span>{" "}
-              satu per satu. Daftar tamu tersimpan di database, terkunci di balik login.
+              Kelola daftar tamu, lalu buka setiap tautan WhatsApp untuk mengirim undangan satu per satu.
             </p>
           </div>
           <div className="flex shrink-0 items-center gap-3 sm:flex-col sm:items-end">
