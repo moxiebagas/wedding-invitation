@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import {
   Check,
+  ClipboardCopy,
   Copy,
   Download,
   Link as LinkIcon,
@@ -60,6 +61,7 @@ export default function BlastAdminPage() {
   const [filter, setFilter] = useState<Filter>("all");
   const [importNotice, setImportNotice] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -221,6 +223,14 @@ export default function BlastAdminPage() {
     await navigator.clipboard.writeText(link);
     setCopiedId(guest.id);
     setTimeout(() => setCopiedId((cur) => (cur === guest.id ? null : cur)), 1500);
+  }
+
+  async function handleCopyMessage(guest: Guest) {
+    const link = buildInvitationLink(baseUrl, guest.name);
+    const message = renderMessage(template, guest.name, link);
+    await navigator.clipboard.writeText(message);
+    setCopiedMessageId(guest.id);
+    setTimeout(() => setCopiedMessageId((cur) => (cur === guest.id ? null : cur)), 1500);
   }
 
   function handleSendWhatsApp(guest: Guest) {
@@ -495,13 +505,25 @@ export default function BlastAdminPage() {
                       </td>
                       <td className="px-2 py-3">
                         <div className="flex items-center gap-1.5">
-                          <button
+                          {/* <button
                             type="button"
                             title="Salin tautan undangan"
                             onClick={() => handleCopyLink(guest)}
                             className="rounded-lg p-2 text-ash transition hover:bg-ink/5 hover:text-ink"
                           >
                             {copiedId === guest.id ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                          </button> */}
+                          <button
+                            type="button"
+                            title="Salin pesan"
+                            onClick={() => handleCopyMessage(guest)}
+                            className="rounded-lg p-2 text-ash transition hover:bg-ink/5 hover:text-ink"
+                          >
+                            {copiedMessageId === guest.id ? (
+                              <Check className="h-4 w-4" />
+                            ) : (
+                              <ClipboardCopy className="h-4 w-4" />
+                            )}
                           </button>
                           <button
                             type="button"
