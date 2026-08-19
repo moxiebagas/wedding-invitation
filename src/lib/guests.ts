@@ -18,6 +18,7 @@ export interface Guest {
   phone: string;
   sent: boolean;
   created_at: string;
+  inviterName?: string;
 }
 
 const TEMPLATE_KEY = "wedding-blast-template";

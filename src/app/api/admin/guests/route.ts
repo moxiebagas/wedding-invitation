@@ -21,6 +21,7 @@ export async function GET(req: NextRequest) {
 interface GuestInput {
   name?: unknown;
   phone?: unknown;
+  inviterName?: unknown;
 }
 
 export async function POST(req: NextRequest) {
@@ -30,18 +31,19 @@ export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
   const rows: GuestInput[] = Array.isArray(body?.guests) ? body.guests : [];
 
-  const valid: { name: string; phone: string }[] = [];
+  const valid: { name: string; phone: string, inviterName?: string }[] = [];
   const seen = new Set<string>();
   let invalid = 0;
   for (const row of rows) {
     const name = typeof row.name === "string" ? row.name.trim().slice(0, 120) : "";
     const phone = normalizePhone(typeof row.phone === "string" ? row.phone : "");
+    const inviterName = typeof row.inviterName === "string" ? row.inviterName.trim().slice(0, 120) : undefined;
     if (!name || !PHONE_RE.test(phone) || seen.has(phone)) {
       invalid++;
       continue;
     }
     seen.add(phone);
-    valid.push({ name, phone });
+    valid.push({ name, phone, inviterName });
   }
 
   if (valid.length === 0) {
