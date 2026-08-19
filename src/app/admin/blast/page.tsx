@@ -7,6 +7,7 @@ import {
   ClipboardCopy,
   Copy,
   Download,
+  Instagram,
   Link as LinkIcon,
   LogOut,
   MessageCircle,
@@ -21,12 +22,14 @@ import { config } from "@/lib/config";
 import { cn } from "@/lib/utils";
 import { downloadTextFile, parseGuestCsv, toGuestCsv } from "@/lib/csv";
 import {
+  buildInstagramLink,
   buildInvitationLink,
   buildWhatsAppLink,
   DEFAULT_TEMPLATE,
+  detectContactType,
+  formatContactDisplay,
   loadBaseUrl,
   loadTemplate,
-  normalizePhone,
   renderMessage,
   saveBaseUrl,
   saveTemplate,
@@ -233,10 +236,17 @@ export default function BlastAdminPage() {
     setTimeout(() => setCopiedMessageId((cur) => (cur === guest.id ? null : cur)), 1500);
   }
 
-  function handleSendWhatsApp(guest: Guest) {
+  async function handleSend(guest: Guest) {
     const link = buildInvitationLink(baseUrl, guest.name);
     const message = renderMessage(template, guest.name, link);
-    window.open(buildWhatsAppLink(guest.phone, message), "_blank", "noopener,noreferrer");
+    if (guest.contactType === "instagram") {
+      // Instagram has no wa.me-style "open DM with prefilled text" URL, so we
+      // copy the message and just open the profile — admin pastes it in.
+      await navigator.clipboard.writeText(message);
+      window.open(buildInstagramLink(guest.phone), "_blank", "noopener,noreferrer");
+    } else {
+      window.open(buildWhatsAppLink(guest.phone, message), "_blank", "noopener,noreferrer");
+    }
     if (!guest.sent) handleToggleSent(guest);
   }
 
@@ -351,14 +361,31 @@ export default function BlastAdminPage() {
               />
             </div>
             <div className="flex-1">
-              <label htmlFor="guest-phone" className="mb-1.5 block font-body text-sm font-medium text-graphite">
-                No. WhatsApp
+              <label htmlFor="guest-phone" className="mb-1.5 flex items-center gap-2 font-body text-sm font-medium text-graphite">
+                No. WhatsApp / Instagram
+                {phone.trim() && (
+                  <span
+                    className={cn(
+                      "inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-body text-xs font-normal",
+                      detectContactType(phone) === "instagram"
+                        ? "bg-pink-50 text-pink-600"
+                        : "bg-emerald-50 text-emerald-700",
+                    )}
+                  >
+                    {detectContactType(phone) === "instagram" ? (
+                      <Instagram className="h-3 w-3" />
+                    ) : (
+                      <MessageCircle className="h-3 w-3" />
+                    )}
+                    {detectContactType(phone) === "instagram" ? "Instagram" : "WhatsApp"}
+                  </span>
+                )}
               </label>
               <input
                 id="guest-phone"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                placeholder="08123456789"
+                placeholder="08123456789 atau @username_ig"
                 className="w-full rounded-xl border border-ink/15 bg-white px-3.5 py-2.5 font-body text-base text-ink outline-none transition focus:border-ink/40"
               />
             </div>
@@ -399,7 +426,7 @@ export default function BlastAdminPage() {
               }}
             />
             <p className="font-body text-sm text-ash">
-              Di Excel: <span className="font-medium">File → Save As → CSV</span>. Kolom: <strong>Nama</strong>, <strong>No. HP</strong>, <strong>Nama Pengundang</strong> (urutan bebas, atau tanpa header: kolom A = nama, B = nomor, C = pengundang).
+              Di Excel: <span className="font-medium">File → Save As → CSV</span>. Kolom: <strong>Nama</strong>, <strong>No. HP / Instagram</strong>, <strong>Nama Pengundang</strong> (urutan bebas, atau tanpa header: kolom A = nama, B = kontak, C = pengundang). Kontak boleh nomor WA (08xxx) atau username Instagram (@username).
             </p>
           </div>
           {importNotice && <p className="mt-2 font-body text-sm text-graphite">{importNotice}</p>}
@@ -479,7 +506,7 @@ export default function BlastAdminPage() {
                   <tr className="border-b border-ink/10 text-left font-body text-sm text-ash">
                     <th className="px-2 py-2 font-medium">Nama</th>
                     <th className="px-2 py-2 font-medium">Nama Pengundang</th>
-                    <th className="px-2 py-2 font-medium">No. WhatsApp</th>
+                    <th className="px-2 py-2 font-medium">Kontak</th>
                     <th className="px-2 py-2 font-medium">Status</th>
                     <th className="px-2 py-2 font-medium">Aksi</th>
                   </tr>
@@ -489,7 +516,16 @@ export default function BlastAdminPage() {
                     <tr key={guest.id} className="border-b border-ink/5 font-body text-base text-ink">
                       <td className="px-2 py-3">{guest.name}</td>
                       <td className="px-2 py-3">{guest.inviterName || "—"}</td>
-                      <td className="px-2 py-3 text-ash">+{normalizePhone(guest.phone)}</td>
+                      <td className="px-2 py-3 text-ash">
+                        <span className="inline-flex items-center gap-1.5">
+                          {guest.contactType === "instagram" ? (
+                            <Instagram className="h-3.5 w-3.5 shrink-0 text-pink-500" />
+                          ) : (
+                            <MessageCircle className="h-3.5 w-3.5 shrink-0 text-emerald-600" />
+                          )}
+                          {formatContactDisplay(guest.phone, guest.contactType)}
+                        </span>
+                      </td>
                       <td className="px-2 py-3">
                         <button
                           type="button"
@@ -527,12 +563,25 @@ export default function BlastAdminPage() {
                           </button>
                           <button
                             type="button"
-                            title="Kirim via WhatsApp"
-                            onClick={() => handleSendWhatsApp(guest)}
-                            className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 font-body text-sm font-medium text-white transition hover:bg-emerald-700"
+                            title={
+                              guest.contactType === "instagram"
+                                ? "Salin pesan & buka Instagram"
+                                : "Kirim via WhatsApp"
+                            }
+                            onClick={() => handleSend(guest)}
+                            className={cn(
+                              "inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-body text-sm font-medium text-white transition",
+                              guest.contactType === "instagram"
+                                ? "bg-pink-600 hover:bg-pink-700"
+                                : "bg-emerald-600 hover:bg-emerald-700",
+                            )}
                           >
-                            <MessageCircle className="h-4 w-4" />
-                            Kirim
+                            {guest.contactType === "instagram" ? (
+                              <Instagram className="h-4 w-4" />
+                            ) : (
+                              <MessageCircle className="h-4 w-4" />
+                            )}
+                            {guest.contactType === "instagram" ? "Buka IG" : "Kirim"}
                           </button>
                           <button
                             type="button"
@@ -554,8 +603,10 @@ export default function BlastAdminPage() {
 
         <p className="mt-6 flex items-center gap-1.5 font-body text-sm text-ash">
           <Send className="h-3.5 w-3.5" />
-          Tiap klik &quot;Kirim&quot; membuka WhatsApp dengan pesan siap kirim — Anda tetap menekan tombol kirim di
-          WhatsApp. Ini menghindari akun terkena batasan WhatsApp karena pengiriman otomatis.
+          Tamu dengan nomor WhatsApp: klik &quot;Kirim&quot; membuka WhatsApp dengan pesan siap kirim — Anda tetap
+          menekan tombol kirim di sana. Tamu dengan Instagram: pesan otomatis tersalin & profilnya terbuka di tab
+          baru — tinggal tempel (paste) di kolom DM. Ini menghindari akun terkena batasan karena pengiriman
+          otomatis.
         </p>
       </div>
     </main>

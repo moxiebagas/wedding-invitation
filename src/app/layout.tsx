@@ -36,8 +36,17 @@ export const metadata: Metadata = {
     "Dengan memohon rahmat Tuhan, kami mengundang Anda untuk hadir di pernikahan Indri Anjari & Muhammad Rafi Herman, Minggu 30 Agustus 2026.",
   openGraph: {
     title: "The Wedding of Indri & Rafi",
-    description: "Minggu, 30 Agustus 2026 — Kelenteng HOK TEK BIO Ciamis",
+    description: "Minggu, 30 Agustus 2026 — Gedung Serba Guna HTB",
     type: "website",
+    // url: https://www.mrafih.my.id/,
+    // images: [
+    //   {
+    //     url: "/og-image.jpg", // taruh file ini di folder /public
+    //     width: 1200,
+    //     height: 630,
+    //     alt: "Indri & Rafi",
+    //   },
+    // ],
   },
 };
 
