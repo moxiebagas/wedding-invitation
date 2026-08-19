@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     description: "Minggu, 30 Agustus 2026 — Gedung Serba Guna HTB",
     type: "website",
     images:[
-      {url: "https://www.mrafih.my.id/images/og-image.png", width: 1200, height: 630, alt: "The Wedding of Indri & Rafi" }
+      {url: "https://www.mrafih.my.id/images/og-image.png", width: 1200, height: 630}
     ]
   },
 };
