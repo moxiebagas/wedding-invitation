@@ -16,8 +16,10 @@ export function fetchGuests(): Promise<Guest[]> {
 }
 
 export function addGuests(
-  rows: { name: string; phone: string }[],
-): Promise<{ guests: Guest[]; inserted: number; invalid: number; duplicate: number }> {
+  rows: { name: string; phone: string, inviterName?: string }[],
+): Promise<{ guests: Guest[]; inserted: number; invalid: number; duplicate: number}> {
+  console.log("addGuests", rows);
+  
   return request("/api/admin/guests", {
     method: "POST",
     body: JSON.stringify({ guests: rows }),

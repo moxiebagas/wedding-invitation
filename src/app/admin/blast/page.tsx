@@ -36,9 +36,7 @@ import { checkSession, logout } from "@/lib/adminSessionApi";
 
 type Filter = "all" | "sent" | "unsent";
 
-type GuestWithInviter = Guest & {
-  inviterName?: string;
-};
+type GuestWithInviter = Guest
 
 export default function BlastAdminPage() {
   const router = useRouter();
@@ -136,7 +134,8 @@ export default function BlastAdminPage() {
     setFormError(null);
     setSubmitting(true);
     try {
-      const result = await addGuests([{ name, phone, inviterName } as Guest & { inviterName: string }]);
+      const result = await addGuests([{ name, phone, inviterName } as Guest]);
+      console.log(result);
       if (result.inserted === 0) {
         setFormError(
           result.duplicate > 0
