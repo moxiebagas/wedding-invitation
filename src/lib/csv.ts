@@ -5,6 +5,8 @@
  * since that's what Excel's regional "Save As CSV" tends to produce.
  */
 
+import { formatContactDisplay, type ContactType } from "@/lib/guests";
+
 function splitLine(line: string, delimiter: string): string[] {
   const cells: string[] = [];
   let cur = "";
@@ -34,10 +36,18 @@ function splitLine(line: string, delimiter: string): string[] {
 }
 
 const NAME_HEADERS = ["nama", "name", "nama tamu", "guest", "guest name"];
-const PHONE_HEADERS = ["no hp", "nomor", "nomor hp", "no. hp", "phone", "no telp", "telepon", "whatsapp", "wa", "nomor whatsapp", "no. whatsapp"];
+// "Kontak" is now WhatsApp-or-Instagram, so this recognises both kinds of header.
+const CONTACT_HEADERS = [
+  "no hp", "nomor", "nomor hp", "no. hp", "phone", "no telp", "telepon",
+  "whatsapp", "wa", "nomor whatsapp", "no. whatsapp",
+  "instagram", "ig", "username ig", "username instagram", "kontak",
+];
+const INVITER_HEADERS = ["nama pengundang", "pengundang", "inviter", "inviter name", "diundang oleh"];
 
-/** Parse a CSV file's text into {name, phone} rows, matching common header names. */
-export function parseGuestCsv(text: string): { name: string; phone: string }[] {
+/** Parse a CSV file's text into {name, phone, inviterName} rows, matching common header names.
+ *  `phone` may hold either a WhatsApp number or an Instagram handle — the caller
+ *  (the /api/admin/guests endpoint) detects which one it is. */
+export function parseGuestCsv(text: string): { name: string; phone: string; inviterName?: string }[] {
   const lines = text.split(/\r?\n/).filter((l) => l.trim().length > 0);
   if (lines.length === 0) return [];
 
@@ -45,20 +55,23 @@ export function parseGuestCsv(text: string): { name: string; phone: string }[] {
   const header = splitLine(lines[0], delimiter).map((h) => h.toLowerCase());
 
   const nameIdx = header.findIndex((h) => NAME_HEADERS.includes(h));
-  const phoneIdx = header.findIndex((h) => PHONE_HEADERS.includes(h));
+  const contactIdx = header.findIndex((h) => CONTACT_HEADERS.includes(h));
+  const inviterIdx = header.findIndex((h) => INVITER_HEADERS.includes(h));
 
-  // No recognisable header — assume column A = nama, column B = no. HP.
-  const hasHeader = nameIdx !== -1 || phoneIdx !== -1;
+  // No recognisable header — assume column A = nama, B = kontak, C = pengundang.
+  const hasHeader = nameIdx !== -1 || contactIdx !== -1 || inviterIdx !== -1;
   const startRow = hasHeader ? 1 : 0;
   const nameCol = nameIdx !== -1 ? nameIdx : 0;
-  const phoneCol = phoneIdx !== -1 ? phoneIdx : 1;
+  const contactCol = contactIdx !== -1 ? contactIdx : 1;
+  const inviterCol = inviterIdx !== -1 ? inviterIdx : 2;
 
-  const rows: { name: string; phone: string }[] = [];
+  const rows: { name: string; phone: string; inviterName?: string }[] = [];
   for (let i = startRow; i < lines.length; i++) {
     const cells = splitLine(lines[i], delimiter);
     const name = cells[nameCol]?.trim() ?? "";
-    const phone = cells[phoneCol]?.trim() ?? "";
-    if (name || phone) rows.push({ name, phone });
+    const phone = cells[contactCol]?.trim() ?? "";
+    const inviterName = cells[inviterCol]?.trim() || undefined;
+    if (name || phone) rows.push({ name, phone, inviterName });
   }
   return rows;
 }
@@ -68,10 +81,19 @@ function toCsvCell(value: string): string {
   return value;
 }
 
-export function toGuestCsv(rows: { name: string; phone: string; sent: boolean }[]): string {
-  const header = "Nama,No. HP,Terkirim";
+export function toGuestCsv(
+  rows: { name: string; phone: string; contactType?: ContactType; inviterName?: string; sent: boolean }[],
+): string {
+  const header = "Nama,Kontak (WA/IG),Nama Pengundang,Terkirim";
   const body = rows
-    .map((r) => [toCsvCell(r.name), toCsvCell(r.phone), r.sent ? "Ya" : "Belum"].join(","))
+    .map((r) =>
+      [
+        toCsvCell(r.name),
+        toCsvCell(formatContactDisplay(r.phone, r.contactType ?? "whatsapp")),
+        toCsvCell(r.inviterName ?? ""),
+        r.sent ? "Ya" : "Belum",
+      ].join(","),
+    )
     .join("\n");
   return `${header}\n${body}`;
 }

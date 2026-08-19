@@ -12,10 +12,14 @@
  * the server route handlers.
  */
 
+export type ContactType = "whatsapp" | "instagram";
+
 export interface Guest {
   id: string;
   name: string;
   phone: string;
+  /** How `phone` should be interpreted — a WhatsApp number or an Instagram handle. Defaults to "whatsapp" for older rows. */
+  contactType?: ContactType;
   sent: boolean;
   created_at: string;
   inviterName?: string;
@@ -84,4 +88,59 @@ export function renderMessage(template: string, name: string, link: string): str
 export function buildWhatsAppLink(phone: string, message: string): string {
   const normalized = normalizePhone(phone);
   return `https://wa.me/${normalized}?text=${encodeURIComponent(message)}`;
+}
+
+// ── Instagram (alternative contact channel) ─────────────────────────────
+//
+// A guest's contact field can hold either a WhatsApp number or an Instagram
+// handle. We guess which one from the raw text: anything that's "mostly
+// digits" is treated as a phone number, anything else (letters, an "@"
+// prefix, or an instagram.com URL) is treated as a handle.
+
+const PHONE_LIKE_RE = /^[\d+\-\s()]+$/;
+
+/** Guess whether a raw contact value looks like a WhatsApp number or an Instagram handle. */
+export function detectContactType(raw: string): ContactType {
+  const trimmed = raw.trim();
+  if (!trimmed) return "whatsapp";
+  if (trimmed.startsWith("@") || /instagram\.com/i.test(trimmed)) return "instagram";
+  return PHONE_LIKE_RE.test(trimmed) ? "whatsapp" : "instagram";
+}
+
+/** Normalise an Instagram handle: strips "@", full URL, trailing slash/query, lowercases. */
+export function normalizeInstagramUsername(raw: string): string {
+  const withoutUrl = raw.trim().replace(/^https?:\/\/(www\.)?instagram\.com\//i, "");
+  const withoutAt = withoutUrl.replace(/^@/, "");
+  const withoutTrailing = withoutAt.split(/[/?]/)[0];
+  return withoutTrailing.toLowerCase();
+}
+
+/** True if `raw` normalises to a syntactically valid Instagram username. */
+export function isValidInstagramUsername(raw: string): boolean {
+  const normalized = normalizeInstagramUsername(raw);
+  return (
+    /^[a-z0-9._]{1,30}$/.test(normalized) &&
+    !normalized.includes("..") &&
+    !normalized.startsWith(".") &&
+    !normalized.endsWith(".")
+  );
+}
+
+/** Normalise a raw contact value according to its (detected) type. */
+export function normalizeContact(raw: string, type: ContactType = detectContactType(raw)): string {
+  return type === "instagram" ? normalizeInstagramUsername(raw) : normalizePhone(raw);
+}
+
+/** True if `raw` is a valid contact for its (detected) type. */
+export function isValidContact(raw: string, type: ContactType = detectContactType(raw)): boolean {
+  return type === "instagram" ? isValidInstagramUsername(raw) : isValidPhone(raw);
+}
+
+/** Human-friendly display for a stored contact value, e.g. "+62812…" or "@rafi.herman". */
+export function formatContactDisplay(phone: string, contactType: ContactType = "whatsapp"): string {
+  return contactType === "instagram" ? `@${phone}` : `+${phone}`;
+}
+
+export function buildInstagramLink(username: string): string {
+  return `https://instagram.com/${normalizeInstagramUsername(username)}`;
 }

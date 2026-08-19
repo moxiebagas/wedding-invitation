@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isAdminAuthorized, notConfiguredResponse, unauthorizedResponse } from "@/lib/adminAuth";
-import { normalizePhone } from "@/lib/guests";
+import { detectContactType, isValidContact, normalizeContact, type ContactType } from "@/lib/guests";
 import { isSupabaseAdminConfigured, supabaseAdmin } from "@/lib/supabaseAdmin";
-
-const PHONE_RE = /^62\d{8,13}$/;
 
 export async function GET(req: NextRequest) {
   if (!isAdminAuthorized(req)) return unauthorizedResponse();
@@ -31,19 +29,23 @@ export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
   const rows: GuestInput[] = Array.isArray(body?.guests) ? body.guests : [];
 
-  const valid: { name: string; phone: string, inviterName?: string }[] = [];
+  // "phone" can be a WhatsApp number OR an Instagram handle — contactType
+  // records which one so the rest of the app knows how to render/send it.
+  const valid: { name: string; phone: string; inviterName?: string; contactType: ContactType }[] = [];
   const seen = new Set<string>();
   let invalid = 0;
   for (const row of rows) {
     const name = typeof row.name === "string" ? row.name.trim().slice(0, 120) : "";
-    const phone = normalizePhone(typeof row.phone === "string" ? row.phone : "");
+    const rawContact = typeof row.phone === "string" ? row.phone : "";
+    const contactType = detectContactType(rawContact);
+    const phone = normalizeContact(rawContact, contactType);
     const inviterName = typeof row.inviterName === "string" ? row.inviterName.trim().slice(0, 120) : undefined;
-    if (!name || !PHONE_RE.test(phone) || seen.has(phone)) {
+    if (!name || !isValidContact(rawContact, contactType) || seen.has(phone)) {
       invalid++;
       continue;
     }
     seen.add(phone);
-    valid.push({ name, phone, inviterName });
+    valid.push({ name, phone, inviterName, contactType });
   }
 
   if (valid.length === 0) {
