@@ -4,7 +4,7 @@ import { useRef, useState, useEffect } from "react";
 import { Invitation } from "@/components/Invitation";
 import { DesktopSlideshow } from "@/components/DesktopSlideshow";
 import { ScrollContainerProvider } from "@/components/ui/ParallaxBg";
-
+import Head from "next/head";
 /**
  * Renders mobile-only layout below lg, and a desktop split-panel layout at lg+.
  *
@@ -34,22 +34,29 @@ export function ResponsiveInvitationLayout({ guestName }: { guestName: string })
   }
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-ink">
-      {/* Left: fullscreen automated slideshow */}
-      <div className="relative min-w-0 flex-1 overflow-hidden">
-        <DesktopSlideshow />
-      </div>
+    <>
+      <Head>
 
-      {/* Right: mobile-width invitation panel — scroll is isolated here */}
-      <div
-        ref={rightPanelRef}
-        className="no-scrollbar relative h-screen w-[480px] shrink-0 overflow-x-hidden overflow-y-auto bg-paper"
-        style={{ transform: "translateZ(0)" }}
-      >
-        <ScrollContainerProvider containerRef={rightPanelRef}>
-          <Invitation guestName={guestName} scrollContainerRef={rightPanelRef} />
-        </ScrollContainerProvider>
-      </div>
-    </div>
+      </Head>
+      <main>
+        <div className="flex h-screen w-screen overflow-hidden bg-ink">
+          {/* Left: fullscreen automated slideshow */}
+          <div className="relative min-w-0 flex-1 overflow-hidden">
+            <DesktopSlideshow />
+          </div>
+
+          {/* Right: mobile-width invitation panel — scroll is isolated here */}
+          <div
+            ref={rightPanelRef}
+            className="no-scrollbar relative h-screen w-[480px] shrink-0 overflow-x-hidden overflow-y-auto bg-paper"
+            style={{ transform: "translateZ(0)" }}
+          >
+            <ScrollContainerProvider containerRef={rightPanelRef}>
+              <Invitation guestName={guestName} scrollContainerRef={rightPanelRef} />
+            </ScrollContainerProvider>
+          </div>
+        </div>
+      </main>
+    </>
   );
 }
